@@ -10,7 +10,9 @@ public class Block : MonoBehaviour
     private ContactPoint[] contacts;
     private enum Faces { TOP, BOTTOM, LEFT, RIGHT };
     private bool[] canMove = { true, true, true, true };
-    private bool locked = false;
+    public bool locked = false;
+    int row;
+    int col;
 
     void OnMouseDown()
     {
@@ -104,21 +106,5 @@ public class Block : MonoBehaviour
         {
             canMove[iii] = true;
         }
-    }
-
-
-    int row;
-    int col;
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
