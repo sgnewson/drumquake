@@ -5,6 +5,11 @@ using XboxCtrlrInput;
 
 public class WaveManager : MonoBehaviour {
 
+	const float waveStartInterval = 1.0f;
+	const float waveSpawnDelay = 2.0f;
+	const float waveStartRadius = 2f;
+	const float waveShrinkRate = 0.5f;
+
 	public GameObject WavePrefab;
 	public float DelayBetweenWaves;
 	public List<Wave> WaveList;
@@ -18,18 +23,13 @@ public class WaveManager : MonoBehaviour {
 
 	void Awake() {
 		WaveList = new List<Wave> ();
-		StartCoroutine ("SpawnWave");
+		InvokeRepeating ("SpawnWave", waveSpawnDelay, waveStartInterval);
 	}
 
-	IEnumerator SpawnWave() {
-		yield return new WaitForSeconds (DelayBetweenWaves);
-
+	void SpawnWave() {
 		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefab, new Vector3 (0f, 0f, 0f), Quaternion.identity);
-		Wave newWave = new Wave (0.5f, newWaveGameObject);
-
+		Wave newWave = new Wave (waveStartRadius, newWaveGameObject);
 		WaveList.Add (newWave);
-
-		StartCoroutine ("SpawnWave");
 	}
 
 	void Update() {
@@ -39,7 +39,7 @@ public class WaveManager : MonoBehaviour {
 		foreach (Wave wave in WaveList) {
 			float per = wave.Percentage;
 			if (per > 0f) {
-				wave.Percentage -= Time.deltaTime;
+				wave.Percentage -= waveShrinkRate * Time.deltaTime;
 				wave.WavePrefab.transform.localScale = new Vector3 (wave.Percentage, wave.Percentage, wave.Percentage);
 				WavesToKeep.Add (wave);
 			} else {
