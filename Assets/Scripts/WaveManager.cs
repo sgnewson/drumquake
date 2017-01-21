@@ -24,10 +24,42 @@ public class WaveManager : MonoBehaviour {
 	public Material greenCircle;
 	public Material yellowCircle;
 
+	Dictionary<XboxButton, AudioStuff> clipForButton;
+
+	[Range (0f, 1f)] public float MissPitchMultiplier;
+	[Range (0f, 1f)] public float MissVolumeMultiplier;
+
+	[Range (0f, 1f)] public float ClosePitchMultiplier;
+	[Range (0f, 1f)] public float CloseVolumeMultiplier;
+
+	[Range (0f, 1f)] public float HitPitchMultiplier;
+	[Range (0f, 1f)] public float HitVolumeMultiplier;
+
+	public AudioClip RedSound;
+	public AudioClip YellowSound;
+	public AudioClip BlueSound;
+	public AudioClip GreenSound;
+
+	[Range (0f, 1f)] public float baseRedVolume;
+	[Range (0f, 1f)] public float baseYellowVolume;
+	[Range (0f, 1f)] public float baseBlueVolume;
+	[Range (0f, 1f)] public float baseGreenVolume;
+
+	[Range (-3f, 3f)] public float basePitch;
+
+	AudioSource audioSource;
+
 	public enum LerpMode {Linear, EaseOut, EaseIn, Exponential, SmoothStep, SmootherStep};
 	public LerpMode TransitionLerpMode;
 
 	void Awake() {
+		clipForButton = new Dictionary<XboxButton, AudioStuff> ();
+		clipForButton.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume));
+		clipForButton.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume));
+		clipForButton.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume));
+		clipForButton.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume));
+
+		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
 		WaveScoreUI = GameObject.Find("WaveScoreUI").GetComponent<Text>();
 
@@ -61,7 +93,6 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	void Update() {
-
 		List<Wave> WavesToKeep = new List<Wave> ();
 
 		foreach (Wave wave in WaveList) {
@@ -76,7 +107,7 @@ public class WaveManager : MonoBehaviour {
 				GameObject.Destroy (wave.WavePrefab);
 			}
 		}
-			
+
 		WaveList = WavesToKeep;
 		WaveScore = Mathf.Max(0, WaveScore);
 
@@ -91,7 +122,7 @@ public class WaveManager : MonoBehaviour {
 		float delta = Mathf.Abs (0.2f - wave.Percentage);
 
 		if (wave.Button != buttonPressed) {
-			WaveIncorrect ();
+			WaveIncorrect (buttonPressed);
 			return;
 		}
 
@@ -108,6 +139,11 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveHit (XboxButton buttonPressed)
 	{
+		audioSource.clip = clipForButton[buttonPressed].thisClip;
+		audioSource.volume = clipForButton[buttonPressed].Volume * HitVolumeMultiplier;
+		audioSource.pitch = basePitch * HitPitchMultiplier;
+		audioSource.Play ();
+
 		string resultText = "HIT :) " + buttonPressed;
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
 		WaveScore += 10;
@@ -117,6 +153,11 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveClose (XboxButton buttonPressed)
 	{
+		audioSource.clip = clipForButton[buttonPressed].thisClip;
+		audioSource.volume = clipForButton[buttonPressed].Volume * CloseVolumeMultiplier;
+		audioSource.pitch = basePitch * ClosePitchMultiplier;
+		audioSource.Play ();
+
 		string resultText = "CLOSE :| " + buttonPressed;
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
 		WaveScore += 2;
@@ -126,6 +167,11 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveMiss (XboxButton buttonPressed)
 	{
+		audioSource.clip = clipForButton[buttonPressed].thisClip;
+		audioSource.volume = clipForButton[buttonPressed].Volume * MissVolumeMultiplier;
+		audioSource.pitch = basePitch * MissPitchMultiplier;
+		audioSource.Play ();
+
 		string resultText = "MISS :( " + buttonPressed;
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
 		WaveScore -= 5;
@@ -142,8 +188,13 @@ public class WaveManager : MonoBehaviour {
 		DisplayHitResult (resultText);
 	}
 
-	private void  WaveIncorrect ()
+	private void  WaveIncorrect (XboxButton buttonPressed)
 	{
+		audioSource.clip = clipForButton[buttonPressed].thisClip;
+		audioSource.volume = clipForButton[buttonPressed].Volume * MissVolumeMultiplier;
+		audioSource.pitch = basePitch * MissPitchMultiplier;
+		audioSource.Play ();
+
 		string resultText = "INCORRECT!! ";
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
 		WaveScore -= 7;
@@ -155,6 +206,17 @@ public class WaveManager : MonoBehaviour {
 	{
 		Debug.Log (resultText);
 		HitResultUI.text = resultText;
+	}
+
+	public class AudioStuff {
+		public AudioClip thisClip;
+		public float Volume;
+
+		public AudioStuff(AudioClip c, float v) {
+			thisClip = c;
+			Volume = v;
+		}
+
 	}
 
 }
