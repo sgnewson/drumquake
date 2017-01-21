@@ -36,10 +36,15 @@ public class MoveCamera : MonoBehaviour {
 	}
 
 	void Shake(){
-		originPosition = transform.position;
-		originRotation = transform.rotation;
-		shake_intensity = .3f;
-		shake_decay = 0.002f;
+		Shake2 (0.3f);
 	}
 
+	void Shake2 (float shakeIntensity)
+	{
+		Debug.Log ("Quake Magnitude: " + shakeIntensity);
+		originPosition = transform.position;
+		originRotation = transform.rotation;
+		shake_intensity = shakeIntensity;
+		shake_decay = 0.002f;
+	}
 }

@@ -102,7 +102,7 @@ public class WaveManager : MonoBehaviour {
 
 	void Earthquake() {
 		if (EarthquakeTimerCount <= 0) {
-			mainCamera.SendMessage ("Shake");
+			mainCamera.SendMessage ("Shake2", WaveScore / 1000);
 			EarthquakeTimerCount = earthquakeTimerStartCount;
 		} else {
 			EarthquakeTimerCount--;
@@ -134,7 +134,7 @@ public class WaveManager : MonoBehaviour {
 
 	public void HandleDrumPress(XboxButton buttonPressed) {
 		Wave wave = WaveList [0];
-		Debug.Log ("percentage: " + wave.Percentage);
+//		Debug.Log ("percentage: " + wave.Percentage);
 
 		float delta = Mathf.Abs (0.2f - wave.Percentage);
 
@@ -221,7 +221,7 @@ public class WaveManager : MonoBehaviour {
 
 	private void DisplayHitResult (string resultText)
 	{
-		Debug.Log (resultText);
+//		Debug.Log (resultText);
 		HitResultUI.text = resultText;
 	}
 
