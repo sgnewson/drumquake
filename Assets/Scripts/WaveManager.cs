@@ -16,7 +16,7 @@ public class WaveManager : MonoBehaviour {
 
 	public Text WaveScoreUI;
 	public Text HitResultUI;
-	public GameObject WavePrefab;
+	public GameObject WavePrefabLocal;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
 
@@ -33,14 +33,23 @@ public class WaveManager : MonoBehaviour {
 	void SpawnWave() {
 		XboxButton waveType;
 
+
+
+		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefabLocal, new Vector3 (0f, 0f, 0f), Quaternion.identity);
+		newWaveGameObject.SetActive (true);
+
 		if (WaveCount % 2 == 0) {
 			waveType = XboxButton.A;
+			Material material = new Material (Shader.Find ("Standard"));
+			material.color = Color.blue;
+			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = material;
 		} else {
 			waveType = XboxButton.B;
 		}
 
-		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefab, new Vector3 (0f, 0f, 0f), Quaternion.identity);
+
 		Wave newWave = new Wave (waveType, waveStartRadius, newWaveGameObject);
+//		newWaveGameObject.GetComponent<MeshRenderer> ().material.color = Color.blue;
 		WaveList.Add (newWave);
 
 		WaveCount++;
@@ -51,7 +60,7 @@ public class WaveManager : MonoBehaviour {
 		List<Wave> WavesToKeep = new List<Wave> ();
 
 		foreach (Wave wave in WaveList) {
-			if (wave.Percentage > 0.05f) {
+			if (wave.Percentage > 0.1f) {
 				wave.Percentage -= waveShrinkRate * Time.deltaTime;
 				wave.WavePrefab.transform.localScale = new Vector3 (wave.Percentage, wave.Percentage, wave.Percentage);
 				WavesToKeep.Add (wave);
@@ -66,7 +75,7 @@ public class WaveManager : MonoBehaviour {
 		WaveList = WavesToKeep;
 		WaveScore = Mathf.Max(0, WaveScore);
 
-		Debug.Log ("Wave Score: " + WaveScore);
+//		Debug.Log ("Wave Score: " + WaveScore);
 		WaveScoreUI.text = "Wave Score: " + WaveScore;
 	}
 
@@ -75,9 +84,9 @@ public class WaveManager : MonoBehaviour {
 		Debug.Log ("percentage: " + wave.Percentage);
 
 		float delta = Mathf.Abs (0.2f - wave.Percentage);
-		if (delta < 0.05f) {
+		if (delta < 0.03f) {
 			WaveHit (buttonPressed);
-		} else if (delta < 0.10f) {
+		} else if (delta < 0.07f) {
 			WaveClose (buttonPressed);
 		} else {
 			WaveMiss (buttonPressed);
