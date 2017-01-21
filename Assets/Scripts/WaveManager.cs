@@ -56,12 +56,15 @@ public class WaveManager : MonoBehaviour {
 				wave.WavePrefab.transform.localScale = new Vector3 (wave.Percentage, wave.Percentage, wave.Percentage);
 				WavesToKeep.Add (wave);
 			} else {
+				if (!wave.AttemptedHit) {
+					WaveIgnored ();
+				}
 				GameObject.Destroy (wave.WavePrefab);
-				WaveScore = Mathf.Max(0, WaveScore - 2);
 			}
 		}
 			
 		WaveList = WavesToKeep;
+		WaveScore = Mathf.Max(0, WaveScore);
 
 		Debug.Log ("Wave Score: " + WaveScore);
 		WaveScoreUI.text = "Wave Score: " + WaveScore;
@@ -106,6 +109,15 @@ public class WaveManager : MonoBehaviour {
 		string resultText = "MISS :( " + buttonPressed;
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
 		WaveScore -= 5;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void  WaveIgnored ()
+	{
+		string resultText = "IGNORED :( ";
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+		WaveScore -= 2;
 
 		DisplayHitResult (resultText);
 	}
