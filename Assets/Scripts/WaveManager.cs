@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XboxCtrlrInput;
 
 public class WaveManager : MonoBehaviour {
 
@@ -12,7 +13,7 @@ public class WaveManager : MonoBehaviour {
 	public float WaveDurationSeconds;
 	float currentTime;
 
-	public enum LerpMode {Linear, EaseOut, EaseIn, Exponential, SmoothStep, SmootherStep}
+	public enum LerpMode {Linear, EaseOut, EaseIn, Exponential, SmoothStep, SmootherStep};
 	public LerpMode TransitionLerpMode;
 
 	void Awake() {
@@ -49,18 +50,18 @@ public class WaveManager : MonoBehaviour {
 		WaveList = WavesToKeep;
 	}
 
-	public void HandleDrumPress() {
+	public void HandleDrumPress(XboxButton buttonPressed) {
 		foreach (Wave wave in WaveList) {
 			Debug.Log ("percentage: " + wave.Percentage);
 
 			float delta = Mathf.Abs (0.2f - wave.Percentage);
 
 			if (delta < 0.05f) {
-				Debug.Log ("HIT");
-				ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
+				Debug.Log ("HIT " + buttonPressed);
+				ReferenceWave.GetComponent<Renderer>().material.color = Color.green;
 			} else {
-				Debug.Log ("MISS");
-				ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+				Debug.Log ("MISS " + buttonPressed);
+				ReferenceWave.GetComponent<Renderer>().material.color = Color.red;
 			}
 
 		}

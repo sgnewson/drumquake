@@ -8,20 +8,21 @@ public class DrumControlMaster : MonoBehaviour {
 	public WaveManager WaveManager;
 
 	void Update () {
-		if (XCI.GetButtonDown (XboxButton.A) == true) {
-			WaveManager.HandleDrumPress ();
+
+		if (XCI.GetButtonDown (XboxButton.B) == true || Input.GetKeyDown(KeyCode.Alpha1)) {
+			WaveManager.HandleDrumPress(XboxButton.B);
 		}
 
-		if (XCI.GetButtonDown (XboxButton.B) == true) {
-			Debug.Log ("B pressed");
+		if (XCI.GetButtonDown (XboxButton.Y) == true || Input.GetKeyDown(KeyCode.Alpha2)) {
+			WaveManager.HandleDrumPress(XboxButton.Y);
 		}
 
-		if (XCI.GetButtonDown (XboxButton.X) == true) {
-			Debug.Log ("X pressed");
+		if (XCI.GetButtonDown (XboxButton.X) == true || Input.GetKeyDown(KeyCode.Alpha3)) {
+			WaveManager.HandleDrumPress(XboxButton.X);
 		}
 
-		if (XCI.GetButtonDown (XboxButton.Y) == true) {
-			Debug.Log ("Y pressed");
+		if (XCI.GetButtonDown (XboxButton.A) == true || Input.GetKeyDown(KeyCode.Alpha4)) {
+			WaveManager.HandleDrumPress(XboxButton.A);
 		}
 	}
 }
