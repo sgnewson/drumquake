@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XboxCtrlrInput;
+using UnityEngine.UI;
 
 public class WaveManager : MonoBehaviour {
 
@@ -12,6 +13,7 @@ public class WaveManager : MonoBehaviour {
 
 	private float WaveScore = 0f;
 
+	public Text WaveScoreUI;
 	public GameObject WavePrefab;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
@@ -21,6 +23,8 @@ public class WaveManager : MonoBehaviour {
 
 	void Awake() {
 		WaveList = new List<Wave> ();
+		WaveScoreUI = GameObject.Find("WaveScoreUI").GetComponent<Text>();
+
 		InvokeRepeating ("SpawnWave", waveSpawnDelay, waveStartInterval);
 	}
 
@@ -48,6 +52,7 @@ public class WaveManager : MonoBehaviour {
 		WaveList = WavesToKeep;
 
 		Debug.Log ("Wave Score: " + WaveScore);
+		WaveScoreUI.text = "Wave Score: " + WaveScore;
 	}
 
 	public void HandleDrumPress(XboxButton buttonPressed) {
