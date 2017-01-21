@@ -102,4 +102,9 @@ public class Block : MonoBehaviour
             canMove[iii] = true;
         }
     }
+
+    private void Start()
+    {
+        locked = false;
+    }
 }

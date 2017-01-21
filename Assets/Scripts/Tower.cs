@@ -5,7 +5,8 @@ using UnityEngine;
 public class Tower : MonoBehaviour
 {
     private int _totalHeight;
-    public List<TowerBlock> blocks;
+    public List<Block> blocks;
+    public Spawner blockSpawner;
 
     struct GridRow
     {
@@ -23,7 +24,7 @@ public class Tower : MonoBehaviour
 	void Start ()
     {
         var buildDelta = new Vector3(0, 0.5f, 0);
-		for (var y = 0; y < gridHeight; y++)
+        for (var y = 0; y < gridHeight; y++)
         {
             buildDelta.x = 0;
             for (var x = 0; x < gridWidth; x++)
@@ -34,11 +35,22 @@ public class Tower : MonoBehaviour
             }
             buildDelta.y++;
         }
-	}
-	
-	// Update is called once per frame
-	void Update ()
+
+        blockSpawner = Instantiate(blockSpawner, new Vector3(5, 5), Quaternion.identity);
+
+        blocks.Add(blockSpawner.SpawnBlock());
+    }
+
+    // Update is called once per frame
+    void Update ()
     {
-		
-	}
+        if (blocks.Count != 0)
+        {
+            if (blocks[blocks.Count - 1].locked)
+            {
+                blockSpawner.hasBlock = false;
+                blocks.Add(blockSpawner.SpawnBlock());
+            }
+        }
+    }
 }

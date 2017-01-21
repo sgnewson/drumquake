@@ -34,9 +34,9 @@ public class TowerGridSlot : MonoBehaviour {
         material.color = new Color(0, 1, 0, 0.5f);
         GetComponent<Renderer>().material = material;
         */
-        var newCube = Instantiate(towerBlock, this.transform.position, Quaternion.identity);
-        newCube.gameObject.SetActive(true);
+        //var newCube = Instantiate(towerBlock, this.transform.position, Quaternion.identity);
+        //newCube.gameObject.SetActive(true);
         
-        tower.blocks.Add(newCube);
+        //tower.blocks.Add(newCube);
     }
 }
