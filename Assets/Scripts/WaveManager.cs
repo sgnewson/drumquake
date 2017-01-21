@@ -10,8 +10,9 @@ public class WaveManager : MonoBehaviour {
 	const float waveStartRadius = 1f;
 	const float waveShrinkRate = 0.5f;
 
+	private float WaveScore = 0f;
+
 	public GameObject WavePrefab;
-	public float DelayBetweenWaves;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
 
@@ -40,10 +41,13 @@ public class WaveManager : MonoBehaviour {
 				WavesToKeep.Add (wave);
 			} else {
 				GameObject.Destroy (wave.WavePrefab);
+				WaveScore = Mathf.Max(0, WaveScore - 2);
 			}
 		}
 			
 		WaveList = WavesToKeep;
+
+		Debug.Log ("Wave Score: " + WaveScore);
 	}
 
 	public void HandleDrumPress(XboxButton buttonPressed) {
@@ -55,12 +59,15 @@ public class WaveManager : MonoBehaviour {
 			if (delta < 0.05f) {
 				Debug.Log ("HIT " + buttonPressed);
 				ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
+				WaveScore += 10;
 			} else if (delta < 0.10f) {
 				Debug.Log ("CLOSE " + buttonPressed);
 				ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
+				WaveScore += 2;
 			} else {
 				Debug.Log ("MISS " + buttonPressed);
 				ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+				WaveScore -= 5;
 			}
 
 		}
