@@ -17,14 +17,19 @@ public class Block : MonoBehaviour
     public int gridX { get; set; }
     public int gridY { get; set; }
 
-    public Tower tower;
-
     void OnMouseDown()
     {
+        gameObject.GetComponent<Rigidbody>().detectCollisions = false;
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
         offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
     }
-   
+
+    private void OnMouseUp()
+    {
+        gameObject.GetComponent<Rigidbody>().detectCollisions = true;
+        gameObject.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;    
+    }
+
     void OnMouseDrag()
     {
         if (!locked)
@@ -128,22 +133,16 @@ public class Block : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
-        contacts = collision.contacts;
-        isColliding = true;
-
-        if (!locked && !IsCornerCollision())
+        if (!locked)
         {
-            locked = true;
-        }
+            contacts = collision.contacts;
+            isColliding = true;
 
-        if (!locked && !IsCornerCollision())
-        {
-            locked = true;
+            if (!locked && !IsCornerCollision())
+            {
+                locked = true;
+            }
         }
-
-        this.gridX = (int)Math.Round( this.transform.position.x );
-        this.gridY = (int)Math.Round( this.transform.position.y );
-        this.tower.AddBlock(this);
     }
 
     private void OnCollisionExit(Collision collision)
