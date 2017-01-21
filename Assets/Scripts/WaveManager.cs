@@ -47,6 +47,8 @@ public class WaveManager : MonoBehaviour {
 
 	[Range (-3f, 3f)] public float basePitch;
 
+	[Range (0f, 2f)] public float speedMultiplier;
+
 	AudioSource audioSource;
 
 	public enum LerpMode {Linear, EaseOut, EaseIn, Exponential, SmoothStep, SmootherStep};
@@ -54,42 +56,39 @@ public class WaveManager : MonoBehaviour {
 
 	void Awake() {
 		clipForButton = new Dictionary<XboxButton, AudioStuff> ();
-		clipForButton.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume));
-		clipForButton.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume));
-		clipForButton.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume));
-		clipForButton.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume));
+		clipForButton.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume, greenCircle));
+		clipForButton.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume, redCircle));
+		clipForButton.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume, blueCircle));
+		clipForButton.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume, yellowCircle));
 
 		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
 		WaveScoreUI = GameObject.Find("WaveScoreUI").GetComponent<Text>();
 
-		InvokeRepeating ("SpawnWave", waveSpawnDelay, waveStartInterval);
+		InvokeRepeating ("SpawnGreenWave", 0.0f, 1.0f * speedMultiplier);
+		InvokeRepeating ("SpawnBlueWave", 0.5f, 3.0f * speedMultiplier);
 	}
 
-	void SpawnWave() {
-		XboxButton waveType;
+	void SpawnGreenWave() {
+		SpawnWave (XboxButton.A);
+	}
+
+	void SpawnBlueWave() {
+		if (WaveScore > 80) {
+			SpawnWave (XboxButton.X);
+		}
+	}
+
+	void SpawnWave(XboxButton waveType) {
 
 		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefabLocal, new Vector3 (0f, 0f, 0f), Quaternion.identity);
 		newWaveGameObject.SetActive (true);
 
-		if (WaveCount % 4 == 0) {
-			waveType = XboxButton.A;
-			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = greenCircle;
-		} else if (WaveCount % 3 == 0) {
-			waveType = XboxButton.B;
-			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = redCircle;
-		} else if (WaveCount % 2 == 0) {
-			waveType = XboxButton.X;
-			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = blueCircle;
-		} else {
-			waveType = XboxButton.Y;
-			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = yellowCircle;
-		}
+		newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = clipForButton[waveType].circle;
+
 			
 		Wave newWave = new Wave (waveType, waveStartRadius, newWaveGameObject);
 		WaveList.Add (newWave);
-
-		WaveCount++;
 	}
 
 	void Update() {
@@ -211,10 +210,12 @@ public class WaveManager : MonoBehaviour {
 	public class AudioStuff {
 		public AudioClip thisClip;
 		public float Volume;
+		public Material circle;
 
-		public AudioStuff(AudioClip c, float v) {
+		public AudioStuff(AudioClip c, float v, Material circle) {
 			thisClip = c;
 			Volume = v;
+			this.circle = circle;
 		}
 
 	}
