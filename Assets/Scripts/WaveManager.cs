@@ -25,7 +25,7 @@ public class WaveManager : MonoBehaviour {
 		yield return new WaitForSeconds (DelayBetweenWaves);
 
 		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefab, new Vector3 (0f, 0f, 0f), Quaternion.identity);
-		Wave newWave = new Wave (1f, newWaveGameObject);
+		Wave newWave = new Wave (0.5f, newWaveGameObject);
 
 		WaveList.Add (newWave);
 
@@ -58,10 +58,13 @@ public class WaveManager : MonoBehaviour {
 
 			if (delta < 0.05f) {
 				Debug.Log ("HIT " + buttonPressed);
-				ReferenceWave.GetComponent<Renderer>().material.color = Color.green;
+				ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
+			} else if (delta < 0.10f) {
+				Debug.Log ("CLOSE " + buttonPressed);
+				ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
 			} else {
 				Debug.Log ("MISS " + buttonPressed);
-				ReferenceWave.GetComponent<Renderer>().material.color = Color.red;
+				ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
 			}
 
 		}
