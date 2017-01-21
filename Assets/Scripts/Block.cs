@@ -27,7 +27,6 @@ public class Block : MonoBehaviour
     private void OnMouseUp()
     {
         gameObject.GetComponent<Rigidbody>().detectCollisions = true;
-        gameObject.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;    
     }
 
     void OnMouseDrag()
