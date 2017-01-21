@@ -15,14 +15,51 @@ public class WaveManager : MonoBehaviour {
 	private int WaveCount = 0;
 
 	public Text WaveScoreUI;
-	public GameObject WavePrefab;
+	public Text HitResultUI;
+	public GameObject WavePrefabLocal;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
+	public Material redCircle;
+	public Material blueCircle;
+	public Material greenCircle;
+	public Material yellowCircle;
+
+	Dictionary<XboxButton, AudioStuff> clipForButton;
+
+	[Range (0f, 1f)] public float MissPitchMultiplier;
+	[Range (0f, 1f)] public float MissVolumeMultiplier;
+
+	[Range (0f, 1f)] public float ClosePitchMultiplier;
+	[Range (0f, 1f)] public float CloseVolumeMultiplier;
+
+	[Range (0f, 1f)] public float HitPitchMultiplier;
+	[Range (0f, 1f)] public float HitVolumeMultiplier;
+
+	public AudioClip RedSound;
+	public AudioClip YellowSound;
+	public AudioClip BlueSound;
+	public AudioClip GreenSound;
+
+	[Range (0f, 1f)] public float baseRedVolume;
+	[Range (0f, 1f)] public float baseYellowVolume;
+	[Range (0f, 1f)] public float baseBlueVolume;
+	[Range (0f, 1f)] public float baseGreenVolume;
+
+	[Range (-3f, 3f)] public float basePitch;
+
+	AudioSource audioSource;
 
 	public enum LerpMode {Linear, EaseOut, EaseIn, Exponential, SmoothStep, SmootherStep};
 	public LerpMode TransitionLerpMode;
 
 	void Awake() {
+		clipForButton = new Dictionary<XboxButton, AudioStuff> ();
+		clipForButton.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume));
+		clipForButton.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume));
+		clipForButton.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume));
+		clipForButton.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume));
+
+		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
 		WaveScoreUI = GameObject.Find("WaveScoreUI").GetComponent<Text>();
 
@@ -32,13 +69,23 @@ public class WaveManager : MonoBehaviour {
 	void SpawnWave() {
 		XboxButton waveType;
 
-		if (WaveCount % 2 == 0) {
-			waveType = XboxButton.A;
-		} else {
-			waveType = XboxButton.B;
-		}
+		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefabLocal, new Vector3 (0f, 0f, 0f), Quaternion.identity);
+		newWaveGameObject.SetActive (true);
 
-		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefab, new Vector3 (0f, 0f, 0f), Quaternion.identity);
+		if (WaveCount % 4 == 0) {
+			waveType = XboxButton.A;
+			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = greenCircle;
+		} else if (WaveCount % 3 == 0) {
+			waveType = XboxButton.B;
+			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = redCircle;
+		} else if (WaveCount % 2 == 0) {
+			waveType = XboxButton.X;
+			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = blueCircle;
+		} else {
+			waveType = XboxButton.Y;
+			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = yellowCircle;
+		}
+			
 		Wave newWave = new Wave (waveType, waveStartRadius, newWaveGameObject);
 		WaveList.Add (newWave);
 
@@ -46,23 +93,25 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	void Update() {
-
 		List<Wave> WavesToKeep = new List<Wave> ();
 
 		foreach (Wave wave in WaveList) {
-			if (wave.Percentage > 0.05f) {
+			if (wave.Percentage > 0.1f) {
 				wave.Percentage -= waveShrinkRate * Time.deltaTime;
 				wave.WavePrefab.transform.localScale = new Vector3 (wave.Percentage, wave.Percentage, wave.Percentage);
 				WavesToKeep.Add (wave);
 			} else {
+				if (!wave.AttemptedHit) {
+					WaveIgnored ();
+				}
 				GameObject.Destroy (wave.WavePrefab);
-				WaveScore = Mathf.Max(0, WaveScore - 2);
 			}
 		}
-			
-		WaveList = WavesToKeep;
 
-		Debug.Log ("Wave Score: " + WaveScore);
+		WaveList = WavesToKeep;
+		WaveScore = Mathf.Max(0, WaveScore);
+
+//		Debug.Log ("Wave Score: " + WaveScore);
 		WaveScoreUI.text = "Wave Score: " + WaveScore;
 	}
 
@@ -72,18 +121,102 @@ public class WaveManager : MonoBehaviour {
 
 		float delta = Mathf.Abs (0.2f - wave.Percentage);
 
-		if (delta < 0.05f) {
-			Debug.Log ("HIT " + buttonPressed);
-			ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
-			WaveScore += 10;
-		} else if (delta < 0.10f) {
-			Debug.Log ("CLOSE " + buttonPressed);
-			ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
-			WaveScore += 2;
-		} else {
-			Debug.Log ("MISS " + buttonPressed);
-			ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
-			WaveScore -= 5;
+		if (wave.Button != buttonPressed) {
+			WaveIncorrect (buttonPressed);
+			return;
 		}
+
+		if (delta < 0.03f) {
+			WaveHit (buttonPressed);
+		} else if (delta < 0.07f) {
+			WaveClose (buttonPressed);
+		} else {
+			WaveMiss (buttonPressed);
+		}
+		wave.AttemptedHit = true;
+			
 	}
+
+	private void  WaveHit (XboxButton buttonPressed)
+	{
+		audioSource.clip = clipForButton[buttonPressed].thisClip;
+		audioSource.volume = clipForButton[buttonPressed].Volume * HitVolumeMultiplier;
+		audioSource.pitch = basePitch * HitPitchMultiplier;
+		audioSource.Play ();
+
+		string resultText = "HIT :) " + buttonPressed;
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
+		WaveScore += 10;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void  WaveClose (XboxButton buttonPressed)
+	{
+		audioSource.clip = clipForButton[buttonPressed].thisClip;
+		audioSource.volume = clipForButton[buttonPressed].Volume * CloseVolumeMultiplier;
+		audioSource.pitch = basePitch * ClosePitchMultiplier;
+		audioSource.Play ();
+
+		string resultText = "CLOSE :| " + buttonPressed;
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
+		WaveScore += 2;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void  WaveMiss (XboxButton buttonPressed)
+	{
+		audioSource.clip = clipForButton[buttonPressed].thisClip;
+		audioSource.volume = clipForButton[buttonPressed].Volume * MissVolumeMultiplier;
+		audioSource.pitch = basePitch * MissPitchMultiplier;
+		audioSource.Play ();
+
+		string resultText = "MISS :( " + buttonPressed;
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+		WaveScore -= 5;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void  WaveIgnored ()
+	{
+		string resultText = "IGNORED :( ";
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+		WaveScore -= 2;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void  WaveIncorrect (XboxButton buttonPressed)
+	{
+		audioSource.clip = clipForButton[buttonPressed].thisClip;
+		audioSource.volume = clipForButton[buttonPressed].Volume * MissVolumeMultiplier;
+		audioSource.pitch = basePitch * MissPitchMultiplier;
+		audioSource.Play ();
+
+		string resultText = "INCORRECT!! ";
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+		WaveScore -= 7;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void DisplayHitResult (string resultText)
+	{
+		Debug.Log (resultText);
+		HitResultUI.text = resultText;
+	}
+
+	public class AudioStuff {
+		public AudioClip thisClip;
+		public float Volume;
+
+		public AudioStuff(AudioClip c, float v) {
+			thisClip = c;
+			Volume = v;
+		}
+
+	}
+
 }
