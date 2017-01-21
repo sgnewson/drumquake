@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Block : MonoBehaviour
 {
@@ -58,7 +56,7 @@ public class Block : MonoBehaviour
                 Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
 
                 Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
-                
+
                 // Reassigns curPosition to rounded values for grid-snapping.
                 curPosition = new Vector3(Mathf.Round(curPosition.x), Mathf.Round(curPosition.y), Mathf.Round(curPosition.z));
 
@@ -101,7 +99,7 @@ public class Block : MonoBehaviour
     private void OnCollisionExit(Collision collision)
     {
         isColliding = false;
-        
+
         for (int iii = 0; iii < canMove.Length; iii++)
         {
             canMove[iii] = true;
