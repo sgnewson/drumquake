@@ -89,8 +89,33 @@ public class Block : MonoBehaviour
     {
         contacts = collision.contacts;
         isColliding = true;
+        bool cornerCollision = false;
 
-        locked = true;
+        if (!locked)
+        {
+            // Checks for corner collisions.
+            for (int iii = 0; iii < contacts.Length - 1; iii++)
+            {
+                for (int jjj = iii + 1; jjj < contacts.Length; jjj++)
+                {
+                    if (contacts[iii].point == contacts[jjj].point)
+                    {
+                        cornerCollision = true;
+                        break;
+                    }
+                }
+
+                if (cornerCollision)
+                {
+                    break;
+                }
+            }
+        }
+
+        if (!cornerCollision)
+        {
+            locked = true;
+        }
     }
 
     private void OnCollisionExit(Collision collision)
