@@ -15,6 +15,7 @@ public class WaveManager : MonoBehaviour {
 	private int WaveCount = 0;
 
 	public Text WaveScoreUI;
+	public Text HitResultUI;
 	public GameObject WavePrefab;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
@@ -71,19 +72,23 @@ public class WaveManager : MonoBehaviour {
 		Debug.Log ("percentage: " + wave.Percentage);
 
 		float delta = Mathf.Abs (0.2f - wave.Percentage);
+		string resultText;
 
 		if (delta < 0.05f) {
-			Debug.Log ("HIT " + buttonPressed);
+			resultText = "HIT " + buttonPressed;
 			ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
 			WaveScore += 10;
 		} else if (delta < 0.10f) {
-			Debug.Log ("CLOSE " + buttonPressed);
+			resultText = "CLOSE " + buttonPressed;
 			ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
 			WaveScore += 2;
 		} else {
-			Debug.Log ("MISS " + buttonPressed);
+			resultText = "MISS " + buttonPressed;
 			ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
 			WaveScore -= 5;
 		}
+		Debug.Log (resultText);
+		HitResultUI.text = resultText;
+			
 	}
 }
