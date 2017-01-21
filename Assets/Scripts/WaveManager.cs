@@ -6,9 +6,9 @@ using XboxCtrlrInput;
 public class WaveManager : MonoBehaviour {
 
 	const float waveStartInterval = 1.0f;
-	const float waveSpawnDelay = 2.0f;
-	const float waveStartRadius = 2f;
-	const float waveShrinkRate = 0.5f;
+	const float waveSpawnDelay = 0.5f;
+	const float waveStartRadius = 1f;
+	const float waveShrinkRate = 1f;
 
 	public GameObject WavePrefab;
 	public float DelayBetweenWaves;
