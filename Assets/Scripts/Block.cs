@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 
 public class Block : MonoBehaviour
 {
@@ -9,8 +10,14 @@ public class Block : MonoBehaviour
     private enum Faces { TOP, BOTTOM, LEFT, RIGHT };
     private bool[] canMove = { true, true, true, true };
     public bool locked = false;
+    public bool collapsed = false;
     int row;
     int col;
+
+    public int gridX { get; set; }
+    public int gridY { get; set; }
+
+    public Tower tower;
 
     void OnMouseDown()
     {
@@ -116,6 +123,10 @@ public class Block : MonoBehaviour
         {
             locked = true;
         }
+
+        this.gridX = (int)Math.Round( this.transform.position.x );
+        this.gridY = (int)Math.Round( this.transform.position.y );
+        this.tower.AddBlock(this);
     }
 
     private void OnCollisionExit(Collision collision)
