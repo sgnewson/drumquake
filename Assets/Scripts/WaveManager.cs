@@ -15,9 +15,6 @@ public class WaveManager : MonoBehaviour {
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
 
-	public float WaveDurationSeconds;
-	float currentTime;
-
 	public enum LerpMode {Linear, EaseOut, EaseIn, Exponential, SmoothStep, SmootherStep};
 	public LerpMode TransitionLerpMode;
 
@@ -37,8 +34,7 @@ public class WaveManager : MonoBehaviour {
 		List<Wave> WavesToKeep = new List<Wave> ();
 
 		foreach (Wave wave in WaveList) {
-			float per = wave.Percentage;
-			if (per > 0f) {
+			if (wave.Percentage > 0.05f) {
 				wave.Percentage -= waveShrinkRate * Time.deltaTime;
 				wave.WavePrefab.transform.localScale = new Vector3 (wave.Percentage, wave.Percentage, wave.Percentage);
 				WavesToKeep.Add (wave);
