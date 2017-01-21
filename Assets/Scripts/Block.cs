@@ -90,10 +90,7 @@ public class Block : MonoBehaviour
         contacts = collision.contacts;
         isColliding = true;
 
-        if (collision.collider.gameObject.GetComponent<Block>() != null)
-        {
-            locked = true;
-        }
+        locked = true;
     }
 
     private void OnCollisionExit(Collision collision)
