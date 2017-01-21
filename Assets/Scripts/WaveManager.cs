@@ -23,7 +23,7 @@ public class WaveManager : MonoBehaviour {
 	public GameObject WavePrefabLocal;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
-	public MoveCamera mainCamera;
+	public MoveCamera MainCamera;
 
 	public Material redCircle;
 	public Material blueCircle;
@@ -69,9 +69,6 @@ public class WaveManager : MonoBehaviour {
 
 		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
-		WaveScoreUI = GameObject.Find("WaveScoreUI").GetComponent<Text>();
-		EarthquakeTimerUI = GameObject.Find("EarthquakeTimerUI").GetComponent<Text>();
-		mainCamera = GameObject.Find ("Main Camera").GetComponent<MoveCamera> ();
 
 		InvokeRepeating ("SpawnGreenWave", 0.0f, 1.0f * speedMultiplier);
 		InvokeRepeating ("SpawnBlueWave", 0.5f, 3.0f * speedMultiplier);
@@ -102,7 +99,7 @@ public class WaveManager : MonoBehaviour {
 
 	void Earthquake() {
 		if (EarthquakeTimerCount <= 0) {
-			mainCamera.SendMessage ("Shake2", WaveScore / 1000);
+			MainCamera.Shake (WaveScore / 1000);
 			EarthquakeTimerCount = earthquakeTimerStartCount;
 		} else {
 			EarthquakeTimerCount--;
