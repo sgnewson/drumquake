@@ -17,7 +17,7 @@ public class Block : MonoBehaviour
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
         offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
     }
-
+   
     void OnMouseDrag()
     {
         if (!locked)
@@ -35,21 +35,31 @@ public class Block : MonoBehaviour
             {
                 foreach (ContactPoint contact in contacts)
                 {
-                    if (contact.normal.x == 1)
+                    if (!IsCornerCollision())
                     {
-                        canMove[(int)Faces.LEFT] = false;
+                        if (contact.normal.x == 1)
+                        {
+                            canMove[(int)Faces.LEFT] = false;
+                        }
+                        else if (contact.normal.x == -1)
+                        {
+                            canMove[(int)Faces.RIGHT] = false;
+                        }
+                        else if (contact.normal.y == 1)
+                        {
+                            canMove[(int)Faces.BOTTOM] = false;
+                        }
+                        else if (contact.normal.y == -1)
+                        {
+                            canMove[(int)Faces.TOP] = false;
+                        }
                     }
-                    else if (contact.normal.x == -1)
+                    else
                     {
-                        canMove[(int)Faces.RIGHT] = false;
-                    }
-                    else if (contact.normal.y == 1)
-                    {
-                        canMove[(int)Faces.BOTTOM] = false;
-                    }
-                    else if (contact.normal.y == -1)
-                    {
-                        canMove[(int)Faces.TOP] = false;
+                        for (int iii = 0; iii < canMove.Length; iii++)
+                        {
+                            canMove[iii] = true;
+                        }
                     }
                 }
 
@@ -81,38 +91,45 @@ public class Block : MonoBehaviour
                 }
 
                 transform.position = curPosition;
+
+                if (IsCornerCollision())
+                {
+                    for (int kkk = 0; kkk < canMove.Length; kkk++)
+                    {
+                        canMove[kkk] = true;
+                    }
+                }
             }
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private bool IsCornerCollision()
     {
-        contacts = collision.contacts;
-        isColliding = true;
-        bool cornerCollision = false;
-
-        if (!locked)
+        for (int iii = 0; iii < contacts.Length - 1; iii++)
         {
-            // Checks for corner collisions.
-            for (int iii = 0; iii < contacts.Length - 1; iii++)
+            for (int jjj = iii + 1; jjj < contacts.Length; jjj++)
             {
-                for (int jjj = iii + 1; jjj < contacts.Length; jjj++)
+                if (contacts[iii].point == contacts[jjj].point)
                 {
-                    if (contacts[iii].point == contacts[jjj].point)
-                    {
-                        cornerCollision = true;
-                        break;
-                    }
-                }
-
-                if (cornerCollision)
-                {
-                    break;
+                    return true;
                 }
             }
         }
 
-        if (!cornerCollision)
+        return false;
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        contacts = collision.contacts;
+        isColliding = true;
+
+        if (!locked && !IsCornerCollision())
+        {
+            locked = true;
+        }
+
+        if (!locked && !IsCornerCollision())
         {
             locked = true;
         }
