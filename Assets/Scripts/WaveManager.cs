@@ -19,6 +19,10 @@ public class WaveManager : MonoBehaviour {
 	public GameObject WavePrefabLocal;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
+	public Material redCircle;
+	public Material blueCircle;
+	public Material greenCircle;
+	public Material yellowCircle;
 
 	public enum LerpMode {Linear, EaseOut, EaseIn, Exponential, SmoothStep, SmootherStep};
 	public LerpMode TransitionLerpMode;
@@ -33,23 +37,24 @@ public class WaveManager : MonoBehaviour {
 	void SpawnWave() {
 		XboxButton waveType;
 
-
-
 		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefabLocal, new Vector3 (0f, 0f, 0f), Quaternion.identity);
 		newWaveGameObject.SetActive (true);
 
-		if (WaveCount % 2 == 0) {
+		if (WaveCount % 4 == 0) {
 			waveType = XboxButton.A;
-			Material material = new Material (Shader.Find ("Standard"));
-			material.color = Color.blue;
-			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = material;
-		} else {
+			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = greenCircle;
+		} else if (WaveCount % 3 == 0) {
 			waveType = XboxButton.B;
+			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = redCircle;
+		} else if (WaveCount % 2 == 0) {
+			waveType = XboxButton.X;
+			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = blueCircle;
+		} else {
+			waveType = XboxButton.Y;
+			newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = yellowCircle;
 		}
-
-
+			
 		Wave newWave = new Wave (waveType, waveStartRadius, newWaveGameObject);
-//		newWaveGameObject.GetComponent<MeshRenderer> ().material.color = Color.blue;
 		WaveList.Add (newWave);
 
 		WaveCount++;
@@ -84,6 +89,12 @@ public class WaveManager : MonoBehaviour {
 		Debug.Log ("percentage: " + wave.Percentage);
 
 		float delta = Mathf.Abs (0.2f - wave.Percentage);
+
+		if (wave.Button != buttonPressed) {
+			WaveIncorrect ();
+			return;
+		}
+
 		if (delta < 0.03f) {
 			WaveHit (buttonPressed);
 		} else if (delta < 0.07f) {
@@ -127,6 +138,15 @@ public class WaveManager : MonoBehaviour {
 		string resultText = "IGNORED :( ";
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
 		WaveScore -= 2;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void  WaveIncorrect ()
+	{
+		string resultText = "INCORRECT!! ";
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+		WaveScore -= 7;
 
 		DisplayHitResult (resultText);
 	}
