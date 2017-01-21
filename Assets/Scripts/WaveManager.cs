@@ -72,23 +72,48 @@ public class WaveManager : MonoBehaviour {
 		Debug.Log ("percentage: " + wave.Percentage);
 
 		float delta = Mathf.Abs (0.2f - wave.Percentage);
-		string resultText;
-
 		if (delta < 0.05f) {
-			resultText = "HIT " + buttonPressed;
-			ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
-			WaveScore += 10;
+			WaveHit (buttonPressed);
 		} else if (delta < 0.10f) {
-			resultText = "CLOSE " + buttonPressed;
-			ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
-			WaveScore += 2;
+			WaveClose (buttonPressed);
 		} else {
-			resultText = "MISS " + buttonPressed;
-			ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
-			WaveScore -= 5;
+			WaveMiss (buttonPressed);
 		}
-		Debug.Log (resultText);
-		HitResultUI.text = resultText;
+		wave.AttemptedHit = true;
 			
 	}
+
+	private void  WaveHit (XboxButton buttonPressed)
+	{
+		string resultText = "HIT :) " + buttonPressed;
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
+		WaveScore += 10;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void  WaveClose (XboxButton buttonPressed)
+	{
+		string resultText = "CLOSE :| " + buttonPressed;
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
+		WaveScore += 2;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void  WaveMiss (XboxButton buttonPressed)
+	{
+		string resultText = "MISS :( " + buttonPressed;
+		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+		WaveScore -= 5;
+
+		DisplayHitResult (resultText);
+	}
+
+	private void DisplayHitResult (string resultText)
+	{
+		Debug.Log (resultText);
+		HitResultUI.text = resultText;
+	}
+
 }
