@@ -10,15 +10,21 @@ public class WaveManager : MonoBehaviour {
 	const float waveSpawnDelay = 0.5f;
 	const float waveStartRadius = 1f;
 	const float waveShrinkRate = 0.5f;
+	const int earthquakeTimerStartCount = 60;
 
 	private float WaveScore = 0f;
 	private int WaveCount = 0;
+	private int EarthquakeTimerCount = earthquakeTimerStartCount;
 
+	public Text EarthquakeTimerUI;
 	public Text WaveScoreUI;
 	public Text HitResultUI;
+
 	public GameObject WavePrefabLocal;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
+	public MoveCamera mainCamera;
+
 	public Material redCircle;
 	public Material blueCircle;
 	public Material greenCircle;
@@ -64,9 +70,12 @@ public class WaveManager : MonoBehaviour {
 		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
 		WaveScoreUI = GameObject.Find("WaveScoreUI").GetComponent<Text>();
+		EarthquakeTimerUI = GameObject.Find("EarthquakeTimerUI").GetComponent<Text>();
+		mainCamera = GameObject.Find ("Main Camera").GetComponent<MoveCamera> ();
 
 		InvokeRepeating ("SpawnGreenWave", 0.0f, 1.0f * speedMultiplier);
 		InvokeRepeating ("SpawnBlueWave", 0.5f, 3.0f * speedMultiplier);
+		InvokeRepeating ("Earthquake", 0f, 1f);
 	}
 
 	void SpawnGreenWave() {
@@ -91,6 +100,16 @@ public class WaveManager : MonoBehaviour {
 		WaveList.Add (newWave);
 	}
 
+	void Earthquake() {
+		if (EarthquakeTimerCount <= 0) {
+			mainCamera.SendMessage ("Shake");
+			EarthquakeTimerCount = earthquakeTimerStartCount;
+		} else {
+			EarthquakeTimerCount--;
+		}
+		EarthquakeTimerUI.text = "Time to quake: " + EarthquakeTimerCount;
+	}
+
 	void Update() {
 		List<Wave> WavesToKeep = new List<Wave> ();
 
@@ -110,7 +129,6 @@ public class WaveManager : MonoBehaviour {
 		WaveList = WavesToKeep;
 		WaveScore = Mathf.Max(0, WaveScore);
 
-//		Debug.Log ("Wave Score: " + WaveScore);
 		WaveScoreUI.text = "Wave Score: " + WaveScore;
 	}
 
