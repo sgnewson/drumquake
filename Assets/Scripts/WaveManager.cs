@@ -10,14 +10,15 @@ public class WaveManager : MonoBehaviour {
 	const float waveSpawnDelay = 0.5f;
 	const float waveStartRadius = 1f;
 	const float waveShrinkRate = 0.5f;
-	const int earthquakeTimerStartCount = 60;
+	const int EarthquakeTimerStartCount = 10;
+	const int CutSceneTimerCount = 20;
 
 	public float HeartBeatInMilliseconds = 300f;
 	int beatCount;
 
 	private float WaveScore = 0f;
 	private int WaveCount = 0;
-	private int EarthquakeTimerCount = earthquakeTimerStartCount;
+	private int EarthquakeTimerCount = EarthquakeTimerStartCount;
 
 	public Text EarthquakeTimerUI;
 	public Text WaveScoreUI;
@@ -97,6 +98,10 @@ public class WaveManager : MonoBehaviour {
 	void Heartbeat() {
 		beatCount++;
 
+		if (!GameManager.PlayOn) {
+			return;
+		}
+
 		if (beatCount > 16) {
 			// Check score and set the next pattern appropriately
 			CurrentPattern = GetCurrentPattern();
@@ -128,13 +133,20 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	void EarthquakeCountdown() {
-		if (EarthquakeTimerCount <= 0) {
-			MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000);
-			EarthquakeTimerCount = earthquakeTimerStartCount;
-		} else {
-			EarthquakeTimerCount--;
-		}
-		EarthquakeTimerUI.text = "Countdown: " + EarthquakeTimerCount;
+		EarthquakeTimerCount--;
+
+        if (EarthquakeTimerCount <= 0)
+        {
+            MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000);
+            EarthquakeTimerCount = EarthquakeTimerStartCount + CutSceneTimerCount;
+            GameManager.PlayOn = false;
+            EarthquakeTimerUI.text = "Earthquake!!!!";
+        }
+        else if (EarthquakeTimerCount <= EarthquakeTimerStartCount)
+        {
+            GameManager.PlayOn = true;
+            EarthquakeTimerUI.text = "Countdown: " + EarthquakeTimerCount;
+        }
 	}
 
 	void Update() {
