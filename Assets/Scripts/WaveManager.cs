@@ -30,7 +30,7 @@ public class WaveManager : MonoBehaviour {
 	public Material greenCircle;
 	public Material yellowCircle;
 
-	Dictionary<XboxButton, AudioStuff> clipForButton;
+	Dictionary<XboxButton, AudioStuff> ColorMap;
 
 	[Range (0f, 1f)] public float MissPitchMultiplier;
 	[Range (0f, 1f)] public float MissVolumeMultiplier;
@@ -61,11 +61,11 @@ public class WaveManager : MonoBehaviour {
 	public LerpMode TransitionLerpMode;
 
 	void Awake() {
-		clipForButton = new Dictionary<XboxButton, AudioStuff> ();
-		clipForButton.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume, greenCircle));
-		clipForButton.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume, redCircle));
-		clipForButton.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume, blueCircle));
-		clipForButton.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume, yellowCircle));
+		ColorMap = new Dictionary<XboxButton, AudioStuff> ();
+		ColorMap.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume, greenCircle));
+		ColorMap.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume, redCircle));
+		ColorMap.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume, blueCircle));
+		ColorMap.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume, yellowCircle));
 
 		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
@@ -105,8 +105,7 @@ public class WaveManager : MonoBehaviour {
 		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefabLocal, new Vector3 (0f, 0f, 0f), Quaternion.identity);
 		newWaveGameObject.SetActive (true);
 
-		newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = clipForButton[waveType].circle;
-
+		newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = ColorMap[waveType].circle;
 			
 		Wave newWave = new Wave (waveType, waveStartRadius, newWaveGameObject);
 		WaveList.Add (newWave);
@@ -168,8 +167,8 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveHit (XboxButton buttonPressed)
 	{
-		audioSource.clip = clipForButton[buttonPressed].thisClip;
-		audioSource.volume = clipForButton[buttonPressed].Volume * HitVolumeMultiplier;
+		audioSource.clip = ColorMap[buttonPressed].thisClip;
+		audioSource.volume = ColorMap[buttonPressed].Volume * HitVolumeMultiplier;
 		audioSource.pitch = basePitch * HitPitchMultiplier;
 		audioSource.Play ();
 
@@ -182,8 +181,8 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveClose (XboxButton buttonPressed)
 	{
-		audioSource.clip = clipForButton[buttonPressed].thisClip;
-		audioSource.volume = clipForButton[buttonPressed].Volume * CloseVolumeMultiplier;
+		audioSource.clip = ColorMap[buttonPressed].thisClip;
+		audioSource.volume = ColorMap[buttonPressed].Volume * CloseVolumeMultiplier;
 		audioSource.pitch = basePitch * ClosePitchMultiplier;
 		audioSource.Play ();
 
@@ -196,8 +195,8 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveMiss (XboxButton buttonPressed)
 	{
-		audioSource.clip = clipForButton[buttonPressed].thisClip;
-		audioSource.volume = clipForButton[buttonPressed].Volume * MissVolumeMultiplier;
+		audioSource.clip = ColorMap[buttonPressed].thisClip;
+		audioSource.volume = ColorMap[buttonPressed].Volume * MissVolumeMultiplier;
 		audioSource.pitch = basePitch * MissPitchMultiplier;
 		audioSource.Play ();
 
@@ -219,8 +218,8 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveIncorrect (XboxButton buttonPressed)
 	{
-		audioSource.clip = clipForButton[buttonPressed].thisClip;
-		audioSource.volume = clipForButton[buttonPressed].Volume * MissVolumeMultiplier;
+		audioSource.clip = ColorMap[buttonPressed].thisClip;
+		audioSource.volume = ColorMap[buttonPressed].Volume * MissVolumeMultiplier;
 		audioSource.pitch = basePitch * MissPitchMultiplier;
 		audioSource.Play ();
 
