@@ -51,14 +51,14 @@ public class WaveManager : MonoBehaviour {
 
 	Dictionary<XboxButton, AudioStuff> clipForButton;
 
-	[Range (0f, 1f)] public float MissPitchMultiplier;
-	[Range (0f, 1f)] public float MissVolumeMultiplier;
+	float MissPitchMultiplier = 0.604f;
+	float MissVolumeMultiplier = 0.662f;
 
-	[Range (0f, 1f)] public float ClosePitchMultiplier;
-	[Range (0f, 1f)] public float CloseVolumeMultiplier;
+	float ClosePitchMultiplier = 0.738f;
+	float CloseVolumeMultiplier = 0.8f;
 
-	[Range (0f, 1f)] public float HitPitchMultiplier;
-	[Range (0f, 1f)] public float HitVolumeMultiplier;
+	float HitPitchMultiplier = 1f;
+	float HitVolumeMultiplier = 1f;
 
 	public AudioClip RedSound;
 	public AudioClip YellowSound;
