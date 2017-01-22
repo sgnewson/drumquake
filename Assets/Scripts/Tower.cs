@@ -19,8 +19,6 @@ public class Tower : MonoBehaviour
 
     public TowerGridSlot towerGridSlot;
 
-    public int currentSelectedBlockType { get; set; }
-
     private void BuildGridCells()
     {
         gridCells = new TowerGridSlot[gridHeight, gridWidth];
@@ -46,7 +44,6 @@ public class Tower : MonoBehaviour
  	// Use this for initialization
 	void Start ()
     {
-        currentSelectedBlockType = 0;
         gridHeight = 15 + 4;
         gridWidth = 8 + 4;
 
@@ -57,6 +54,8 @@ public class Tower : MonoBehaviour
         if (!blockSpawner) { return; }
         blockSpawner = Instantiate(blockSpawner, new Vector3(5, 5), Quaternion.identity);
         lastBlock = blockSpawner.SpawnBlock();
+        glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
+        AddGlues(lastBlock);
         blocks.Add(lastBlock);
     }
 
@@ -71,6 +70,8 @@ public class Tower : MonoBehaviour
                 {
                     blockSpawner.hasBlock = false;
                     lastBlock = blockSpawner.SpawnBlock();
+                    glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
+                    AddGlues(lastBlock);
                     blocks.Add(lastBlock);
                 }
                 else
@@ -78,24 +79,13 @@ public class Tower : MonoBehaviour
                     Block tempBlock = lastBlock;
                     blockSpawner.hasBlock = false;
                     lastBlock = blockSpawner.SpawnBlock();
+                    glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
+                    AddGlues(lastBlock);
                     blocks.Add(lastBlock);
                     blocks.Remove(tempBlock);
                     DestroyImmediate(tempBlock.gameObject);
                 }
             }
-        }
-
-        if(Input.GetKeyUp(KeyCode.Z))
-        {
-            currentSelectedBlockType = 0;
-        }
-        else if (Input.GetKeyUp(KeyCode.X))
-        {
-            currentSelectedBlockType = 1;
-        }
-        else if (Input.GetKeyUp(KeyCode.C))
-        {
-            currentSelectedBlockType = 2;
         }
 
         foreach (Block block in blocks)

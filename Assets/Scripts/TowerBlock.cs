@@ -16,19 +16,19 @@ public class TowerBlock : MonoBehaviour
 
     public GroupEntity blockGroup { get; set; }
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
-		
-	}
-	
-	// Update is called once per frame
-	void Update ()
+
+    }
+
+    // Update is called once per frame
+    void Update()
     {
-		if (this.transform.position.y < -1)
+        if (this.transform.position.y < -1)
         {
             tower.glueBlockMatrix[gridY, gridX] = null;
             Destroy(this);
         }
-	}
+    }
 }
