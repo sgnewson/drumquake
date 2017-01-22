@@ -79,10 +79,10 @@ public class WaveManager : MonoBehaviour {
 
 	void Awake() {
 		ColorMap = new Dictionary<XboxButton, AudioStuff> ();
-		ColorMap.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume, greenCircle));
-		ColorMap.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume, redCircle));
-		ColorMap.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume, blueCircle));
-		ColorMap.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume, yellowCircle));
+		ColorMap.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume, greenCircle, 10));
+		ColorMap.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume, redCircle, 50));
+		ColorMap.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume, blueCircle, 20));
+		ColorMap.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume, yellowCircle, 30));
 
 		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
@@ -252,7 +252,7 @@ public class WaveManager : MonoBehaviour {
 	private void  WaveIgnored ()
 	{
 		HitResult.sprite = Miss;
-		WaveScore = GetNewScore(WaveScore, XboxButton.DPadDown, DrumHitQuality.Miss); //DPadDown is just so we have something here
+		WaveScore = GetNewScore(WaveScore, XboxButton.DPadDown, DrumHitQuality.Ignored); //DPadDown is just so we have something here
 	}
 
 	private void  WaveIncorrect (XboxButton buttonPressed)
@@ -269,23 +269,23 @@ public class WaveManager : MonoBehaviour {
 
 	private int GetNewScore(int currentScore, XboxButton pressed, DrumHitQuality quality) {
 		switch (quality) {
-			case DrumHitQuality.Hit: 
-				return currentScore + 10;
-				break;
-			case DrumHitQuality.Close:
-				return currentScore + 2;
-				break;
-			case DrumHitQuality.Miss:
-				return currentScore - 5;
-				break;
-			case DrumHitQuality.Ignored:
-				return currentScore - 2;
-				break;
-			case DrumHitQuality.Incorrect:
-				return currentScore - 7;
-				break;
-			default:
-				return currentScore;
+		case DrumHitQuality.Hit: 
+		return currentScore + ColorMap[pressed].hitScore;
+			break;
+		case DrumHitQuality.Close:
+			return currentScore + ColorMap[pressed].hitScore/5;
+			break;
+		case DrumHitQuality.Miss:
+			return currentScore - ColorMap[pressed].hitScore/2;
+			break;
+		case DrumHitQuality.Ignored:
+			return currentScore - 5; //Can't use button pressed because none was pressed when ignored
+			break;
+		case DrumHitQuality.Incorrect:
+			return currentScore - ColorMap[pressed].hitScore/2;
+			break;
+		default:
+			return currentScore;
 		}
 	}
 
@@ -303,11 +303,13 @@ public class WaveManager : MonoBehaviour {
 		public AudioClip thisClip;
 		public float Volume;
 		public Material circle;
+		public int hitScore;
 
-		public AudioStuff(AudioClip c, float v, Material circle) {
+		public AudioStuff(AudioClip c, float v, Material circle, int hitScore) {
 			thisClip = c;
 			Volume = v;
 			this.circle = circle;
+			this.hitScore = hitScore;
 		}
 	}
 }
