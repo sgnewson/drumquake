@@ -13,7 +13,7 @@ public class Earthquake : MonoBehaviour
 	public GameObject BasePlate;
 	int baseShakeCount;
 	Vector3 intialBasePos;
-	float elapsedShakeTime;
+//	float elapsedShakeTime;
     
 	private float shakeMultiplier;
 
@@ -86,7 +86,7 @@ public class Earthquake : MonoBehaviour
 
 		intialBasePos = BasePlate.transform.position;
 
-		elapsedShakeTime = 0f;
+//		elapsedShakeTime = 0f;
 		baseShakeCount = 0;
 		Invoke ("StopShakeBase", 10);
 		InvokeRepeating ("ShakeBase", 0f, 0.2f);

@@ -11,7 +11,7 @@ public class TowerGridSlot : MonoBehaviour {
     public int gridX { get; set; }
     public int gridY { get; set; }
 
-    private bool mouseDownHere = false;
+//    private bool mouseDownHere = false;
 
     private void OnMouseEnter()
     {

@@ -14,7 +14,7 @@ public class Block : MonoBehaviour
 	public int Score = 0;
     private Vector3 offset;
     public bool isOverGridSlot { get; set; }
-    private ContactPoint[] contacts;
+//    private ContactPoint[] contacts;
     private enum Faces { TOP, BOTTOM, LEFT, RIGHT };
     private bool[] canMove = { true, true, true, true };
     public bool locked = false;
@@ -187,21 +187,21 @@ public class Block : MonoBehaviour
         }
     }
 
-    private bool IsCornerCollision()
-    {
-        for (int iii = 0; iii < contacts.Length - 1; iii++)
-        {
-            for (int jjj = iii + 1; jjj < contacts.Length; jjj++)
-            {
-                if (contacts[iii].point == contacts[jjj].point)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
+//    private bool IsCornerCollision()
+//    {
+////        for (int iii = 0; iii < contacts.Length - 1; iii++)
+////        {
+////            for (int jjj = iii + 1; jjj < contacts.Length; jjj++)
+////            {
+////                if (contacts[iii].point == contacts[jjj].point)
+////                {
+////                    return true;
+////                }
+////            }
+////        }
+////
+////        return false;
+//    }
     /*
     private void OnCollisionStay(Collision collision)
     {
