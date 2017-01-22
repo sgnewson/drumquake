@@ -12,6 +12,9 @@ public class WaveManager : MonoBehaviour {
 	const float waveShrinkRate = 0.5f;
 	const int earthquakeTimerStartCount = 60;
 
+	public float HeartBeatInMilliseconds;
+	int beatCount;
+
 	private float WaveScore = 0f;
 	private int WaveCount = 0;
 	private int EarthquakeTimerCount = earthquakeTimerStartCount;
@@ -30,7 +33,15 @@ public class WaveManager : MonoBehaviour {
 	public Material greenCircle;
 	public Material yellowCircle;
 
+<<<<<<< Updated upstream
 	Dictionary<XboxButton, AudioStuff> ColorMap;
+=======
+	public Dictionary<int, DrumPattern> AllPatterns;
+	public DrumPattern EasyPattern;
+	DrumPattern CurrentPattern;
+
+	Dictionary<XboxButton, AudioStuff> clipForButton;
+>>>>>>> Stashed changes
 
 	[Range (0f, 1f)] public float MissPitchMultiplier;
 	[Range (0f, 1f)] public float MissVolumeMultiplier;
@@ -70,33 +81,21 @@ public class WaveManager : MonoBehaviour {
 		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
 
-		InvokeRepeating ("SpawnGreenWave", 0.0f, 1.0f * speedMultiplier);
-		InvokeRepeating ("SpawnBlueWave", 3.5f, 4.0f * speedMultiplier);
-		InvokeRepeating ("SpawnYellowWave", 0.5f, 2.0f * speedMultiplier);
-		InvokeRepeating ("SpawnRedWave", 0.25f, 8.0f * speedMultiplier);
+		SetupPatterns ();
+
+		InvokeRepeating ("Heartbeat", 0f, HeartBeatInMilliseconds / 1000f);
 
 		InvokeRepeating ("EarthquakeCountdown", 0f, 1f);
+		beatCount = 0;
 	}
 
-	void SpawnGreenWave() {
-		SpawnWave (XboxButton.A);
-	}
+	void Heartbeat() {
+		beatCount++;
 
-	void SpawnBlueWave() {
-		if (WaveScore > 100) {
-			SpawnWave (XboxButton.X);
-		}
-	}    
+		Debug.Log ("Beat count: " + beatCount);
 
-	void SpawnYellowWave() {
-		if (WaveScore > 200) {
-			SpawnWave (XboxButton.Y);
-		}
-	}
-
-	void SpawnRedWave() {
-		if (WaveScore > 300) {
-			SpawnWave (XboxButton.B);
+		if (CurrentPattern.Dict.ContainsKey (beatCount) == true) {
+			SpawnWave (CurrentPattern.Dict [beatCount]);
 		}
 	}
 
@@ -236,6 +235,18 @@ public class WaveManager : MonoBehaviour {
 		HitResultUI.text = resultText;
 	}
 
+	void SetupPatterns() {
+		AllPatterns = new Dictionary<int, DrumPattern> ();
+
+		EasyPattern = new DrumPattern ();
+		EasyPattern.Dict.Add (8, XboxButton.A);
+		EasyPattern.Dict.Add (16, XboxButton.A);
+		EasyPattern.Dict.Add (24, XboxButton.A);
+		EasyPattern.Dict.Add (32, XboxButton.A);
+
+		CurrentPattern = EasyPattern;
+	}
+
 	public class AudioStuff {
 		public AudioClip thisClip;
 		public float Volume;
@@ -246,7 +257,14 @@ public class WaveManager : MonoBehaviour {
 			Volume = v;
 			this.circle = circle;
 		}
+	}
 
+	public class DrumPattern {
+		public Dictionary<int, XboxButton> Dict;
+
+		public DrumPattern() {
+			Dict = new Dictionary<int, XboxButton>();
+		}
 	}
 
 }
