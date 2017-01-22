@@ -90,7 +90,7 @@ public class Tower : MonoBehaviour
 
         foreach (Block block in blocks)
         {
-            if (block.transform.position.y < -1)
+            if (block.transform.position.y + 2 < -1)
             {
                 glueBlockMatrix[block.gridY, block.gridX] = null;
                 Destroy(this);

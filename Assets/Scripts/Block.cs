@@ -123,14 +123,14 @@ public class Block : MonoBehaviour
                     curPosition.x = transform.position.x;
                 }
 
-                if (!canMove[(int)Faces.TOP] && curPosition.y > transform.position.y)
+                if (!canMove[(int)Faces.TOP] && curPosition.y > transform.position.y + 2)
                 {
-                    curPosition.y = transform.position.y;
+                    curPosition.y = transform.position.y + 2;
                 }
 
-                if (!canMove[(int)Faces.BOTTOM] && curPosition.y < transform.position.y)
+                if (!canMove[(int)Faces.BOTTOM] && curPosition.y < transform.position.y + 2)
                 {
-                    curPosition.y = transform.position.y;
+                    curPosition.y = transform.position.y + 2;
                 }
 
                 transform.position = curPosition;
@@ -170,8 +170,8 @@ public class Block : MonoBehaviour
             {
                 locked = true;
                 GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-                gridX = (int)Mathf.Round(transform.position.x);
-                gridY = (int)Mathf.Round(transform.position.y);
+                gridX = (int)Mathf.Round(transform.position.x + 2);
+                gridY = (int)Mathf.Round(transform.position.y + 2);
             }
         }
     }
