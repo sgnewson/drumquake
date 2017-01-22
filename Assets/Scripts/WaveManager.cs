@@ -12,7 +12,7 @@ public class WaveManager : MonoBehaviour {
 	const float waveShrinkRate = 0.5f;
 	const int earthquakeTimerStartCount = 60;
 
-	public float HeartBeatInMilliseconds;
+	public float HeartBeatInMilliseconds = 300f;
 	int beatCount;
 
 	private float WaveScore = 0f;
@@ -33,15 +33,13 @@ public class WaveManager : MonoBehaviour {
 	public Material greenCircle;
 	public Material yellowCircle;
 
-<<<<<<< Updated upstream
 	Dictionary<XboxButton, AudioStuff> ColorMap;
-=======
+
 	public Dictionary<int, DrumPattern> AllPatterns;
 	public DrumPattern EasyPattern;
 	DrumPattern CurrentPattern;
 
 	Dictionary<XboxButton, AudioStuff> clipForButton;
->>>>>>> Stashed changes
 
 	[Range (0f, 1f)] public float MissPitchMultiplier;
 	[Range (0f, 1f)] public float MissVolumeMultiplier;
