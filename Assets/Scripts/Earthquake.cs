@@ -63,7 +63,7 @@ public class Earthquake : MonoBehaviour
     void UpdateCameraShake()
     {
 		if (shake_intensity > 0) {
-			var cameraShake = shake_intensity + .05f;
+			var cameraShake = shake_intensity * .5f + .05f;
 			gameObject.transform.position = originPosition + Random.insideUnitSphere * cameraShake * .5f;
 			gameObject.transform.rotation = new Quaternion (
 				originRotation.x + Random.Range (-cameraShake, cameraShake) * .1f, 

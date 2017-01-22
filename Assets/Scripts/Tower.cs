@@ -18,6 +18,8 @@ public class Tower : MonoBehaviour
     public int gridHeight;
     public int gridWidth;
 
+	SoundEffectManager soundEffectManager;
+
     //for organisation; contains all gridSlot instances
 	public GameObject GridContainer;
 
@@ -28,6 +30,10 @@ public class Tower : MonoBehaviour
     public Block currentBlock { get; set; }
 
     private Dictionary<XboxButton, int> dict;
+
+	void Awake() {
+		soundEffectManager = GameObject.Find ("SoundEffectManager").GetComponent<SoundEffectManager> ();
+	}
 
     private void BuildGridCells()
     {
@@ -133,6 +139,7 @@ public class Tower : MonoBehaviour
             if (this.currentBlock)
             {
                 this.currentBlock.DoPlace();
+				soundEffectManager.PlayPlaceBlockSound ();
             }
         }
 
