@@ -71,8 +71,11 @@ public class WaveManager : MonoBehaviour {
 		WaveList = new List<Wave> ();
 
 		InvokeRepeating ("SpawnGreenWave", 0.0f, 1.0f * speedMultiplier);
-		InvokeRepeating ("SpawnBlueWave", 0.5f, 3.0f * speedMultiplier);
-		InvokeRepeating ("Earthquake", 0f, 1f);
+		InvokeRepeating ("SpawnBlueWave", 3.5f, 4.0f * speedMultiplier);
+		InvokeRepeating ("SpawnYellowWave", 0.5f, 2.0f * speedMultiplier);
+		InvokeRepeating ("SpawnRedWave", 0.25f, 8.0f * speedMultiplier);
+
+		InvokeRepeating ("EarthquakeCountdown", 0f, 1f);
 	}
 
 	void SpawnGreenWave() {
@@ -80,8 +83,20 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	void SpawnBlueWave() {
-		if (WaveScore > 80) {
+		if (WaveScore > 100) {
 			SpawnWave (XboxButton.X);
+		}
+	}    
+
+	void SpawnYellowWave() {
+		if (WaveScore > 200) {
+			SpawnWave (XboxButton.Y);
+		}
+	}
+
+	void SpawnRedWave() {
+		if (WaveScore > 300) {
+			SpawnWave (XboxButton.B);
 		}
 	}
 
@@ -97,7 +112,7 @@ public class WaveManager : MonoBehaviour {
 		WaveList.Add (newWave);
 	}
 
-	void Earthquake() {
+	void EarthquakeCountdown() {
 		if (EarthquakeTimerCount <= 0) {
 			MainCamera.Shake (WaveScore / 1000);
 			EarthquakeTimerCount = earthquakeTimerStartCount;
