@@ -37,8 +37,8 @@ public class DoStuff : MonoBehaviour {
         {
             if (this.tower.blockMatrix[0,x] != null)
             {
-                this.tower.blockMatrix[0, x].rb.useGravity = false;
-                this.tower.blockMatrix[0, x].rb.isKinematic = true;
+//                this.tower.blockMatrix[0, x].rb.useGravity = false;
+//                this.tower.blockMatrix[0, x].rb.isKinematic = true;
                 maxWidthBlocks++;
             }
         }
@@ -52,8 +52,8 @@ public class DoStuff : MonoBehaviour {
             {
                 if (this.tower.blockMatrix[y, x] != null)
                 {
-                    this.tower.blockMatrix[y, x].rb.useGravity = false;
-                    this.tower.blockMatrix[y, x].rb.isKinematic = true;
+//                    this.tower.blockMatrix[y, x].rb.useGravity = false;
+//                    this.tower.blockMatrix[y, x].rb.isKinematic = true;
                     localWidthBlocks++;
                 }
             }
