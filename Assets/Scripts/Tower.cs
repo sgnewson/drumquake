@@ -58,6 +58,10 @@ public class Tower : MonoBehaviour
     }
 
 	public void HandleBeforeEarthquake() {
+		if (currentBlock) {
+			Destroy (currentBlock.gameObject);
+			Destroy (currentBlock);
+		}
 //		lastBlock.gameObject.SetActive (false);
 	}
 
