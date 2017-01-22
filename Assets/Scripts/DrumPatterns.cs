@@ -5,65 +5,65 @@ using XboxCtrlrInput;
 
 public class DrumPatterns {
 
-	private static DrumPattern EasyPattern;
-	private static DrumPattern MediumPattern;
-	private static DrumPattern MediumHardPattern;
-	private static DrumPattern HardPattern;
+	private static DrumPattern Pattern1;
+	private static DrumPattern Pattern2;
+	private static DrumPattern Pattern3;
+	private static DrumPattern Pattern4;
 
 
 	public static DrumPattern GetCurrentPattern(int score) {
 		// use the score to determine the correct pattern and return it
 		if (score < 150) {
-			return EasyPattern;
+			return Pattern1;
 		} else if (score < 300) {
-			return MediumPattern;
+			return Pattern2;
 		} else if (score < 450) {
-			return MediumHardPattern;
+			return Pattern3;
 		} else { 
-			return HardPattern;
+			return Pattern4;
 		}
 	}	
 
 	public static void SetupPatterns() {
-		EasyPattern = new DrumPattern ();
-		EasyPattern.Dict.Add (2, XboxButton.A);
-		EasyPattern.Dict.Add (4, XboxButton.A);
-		EasyPattern.Dict.Add (6, XboxButton.A);
-		EasyPattern.Dict.Add (8, XboxButton.A);
-		EasyPattern.Dict.Add (10, XboxButton.A);
-		EasyPattern.Dict.Add (12, XboxButton.A);
-		EasyPattern.Dict.Add (14, XboxButton.A);
-		EasyPattern.Dict.Add (16, XboxButton.A);
+		Pattern1 = new DrumPattern ();
+		Pattern1.Dict.Add (2, XboxButton.A);
+		Pattern1.Dict.Add (4, XboxButton.A);
+		Pattern1.Dict.Add (6, XboxButton.A);
+		Pattern1.Dict.Add (8, XboxButton.A);
+		Pattern1.Dict.Add (10, XboxButton.A);
+		Pattern1.Dict.Add (12, XboxButton.A);
+		Pattern1.Dict.Add (14, XboxButton.A);
+		Pattern1.Dict.Add (16, XboxButton.A);
 
-		MediumPattern = new DrumPattern ();
-		MediumPattern.Dict.Add (2, XboxButton.A);
-		MediumPattern.Dict.Add (4, XboxButton.A);
-		MediumPattern.Dict.Add (6, XboxButton.X);
-		MediumPattern.Dict.Add (8, XboxButton.A);
-		MediumPattern.Dict.Add (10, XboxButton.A);
-		MediumPattern.Dict.Add (12, XboxButton.A);
-		MediumPattern.Dict.Add (14, XboxButton.X);
-		MediumPattern.Dict.Add (16, XboxButton.A);
+		Pattern2 = new DrumPattern ();
+		Pattern2.Dict.Add (2, XboxButton.A);
+		Pattern2.Dict.Add (4, XboxButton.A);
+		Pattern2.Dict.Add (6, XboxButton.X);
+		Pattern2.Dict.Add (8, XboxButton.A);
+		Pattern2.Dict.Add (10, XboxButton.A);
+		Pattern2.Dict.Add (12, XboxButton.A);
+		Pattern2.Dict.Add (14, XboxButton.X);
+		Pattern2.Dict.Add (16, XboxButton.A);
 
-		MediumHardPattern = new DrumPattern ();
-		MediumHardPattern.Dict.Add (2, XboxButton.A);
-		MediumHardPattern.Dict.Add (4, XboxButton.A);
-		MediumHardPattern.Dict.Add (6, XboxButton.X);
-		MediumHardPattern.Dict.Add (8, XboxButton.Y);
-		MediumHardPattern.Dict.Add (10, XboxButton.A);
-		MediumHardPattern.Dict.Add (12, XboxButton.A);
-		MediumHardPattern.Dict.Add (14, XboxButton.X);
-		MediumHardPattern.Dict.Add (16, XboxButton.Y);
+		Pattern3 = new DrumPattern ();
+		Pattern3.Dict.Add (2, XboxButton.A);
+		Pattern3.Dict.Add (4, XboxButton.A);
+		Pattern3.Dict.Add (6, XboxButton.X);
+		Pattern3.Dict.Add (8, XboxButton.Y);
+		Pattern3.Dict.Add (10, XboxButton.A);
+		Pattern3.Dict.Add (12, XboxButton.A);
+		Pattern3.Dict.Add (14, XboxButton.X);
+		Pattern3.Dict.Add (16, XboxButton.Y);
 
-		HardPattern = new DrumPattern ();
-		HardPattern.Dict.Add (2, XboxButton.A);
-		HardPattern.Dict.Add (4, XboxButton.A);
-		HardPattern.Dict.Add (6, XboxButton.X);
-		HardPattern.Dict.Add (7, XboxButton.Y);
-		HardPattern.Dict.Add (10, XboxButton.A);
-		HardPattern.Dict.Add (12, XboxButton.A);
-		HardPattern.Dict.Add (14, XboxButton.X);
-		HardPattern.Dict.Add (15, XboxButton.Y);
+		Pattern4 = new DrumPattern ();
+		Pattern4.Dict.Add (2, XboxButton.A);
+		Pattern4.Dict.Add (4, XboxButton.A);
+		Pattern4.Dict.Add (6, XboxButton.X);
+		Pattern4.Dict.Add (7, XboxButton.Y);
+		Pattern4.Dict.Add (10, XboxButton.A);
+		Pattern4.Dict.Add (12, XboxButton.A);
+		Pattern4.Dict.Add (14, XboxButton.X);
+		Pattern4.Dict.Add (15, XboxButton.Y);
 	}
 		
 	public class DrumPattern {
