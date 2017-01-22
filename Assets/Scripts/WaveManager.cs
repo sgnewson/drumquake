@@ -17,12 +17,7 @@ public class WaveManager : MonoBehaviour {
 	int beatCount;
 
 	private float WaveScore = 0f;
-<<<<<<< Updated upstream
-	private int WaveCount = 0;
 	private int EarthquakeTimerCount = EarthquakeTimerStartCount;
-=======
-	private int EarthquakeTimerCount = earthquakeTimerStartCount;
->>>>>>> Stashed changes
 
 	public Text EarthquakeTimerUI;
 	public Text WaveScoreUI;
