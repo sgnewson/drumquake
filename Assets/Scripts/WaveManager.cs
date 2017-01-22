@@ -295,7 +295,7 @@ public class WaveManager : MonoBehaviour {
 		HardPattern.Dict.Add (13, XboxButton.Y);
 		HardPattern.Dict.Add (14, XboxButton.A);
 
-		CurrentPattern = EasyPattern;
+		CurrentPattern = MediumPattern;
 	}
 
 	void IntensifyLight(float multiplier) {
