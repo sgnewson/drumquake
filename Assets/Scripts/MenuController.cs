@@ -37,6 +37,17 @@ public class MenuController : MonoBehaviour {
 		SceneManager.LoadScene(levelScene);
 	}
 
+	public void GoToCredits()
+	{
+		IntroAnim.SetTrigger ("outro");
+		StartCoroutine ("GoToCreditsAfterDelay");
+	}
+
+	IEnumerator GoToCreditsAfterDelay() {
+		yield return new WaitForSeconds (2.5f);
+		SceneManager.LoadScene("credits");
+	}	
+
     /// <summary>
     /// Creates a pop up for confirmation
     /// </summary>
