@@ -11,7 +11,7 @@ public class Block : MonoBehaviour
 
     private Vector3 screenPoint;
     private Vector3 offset;
-    private bool isColliding = false;
+    public bool isOverGridSlot = false;
     private ContactPoint[] contacts;
     private enum Faces { TOP, BOTTOM, LEFT, RIGHT };
     private bool[] canMove = { true, true, true, true };
@@ -21,19 +21,24 @@ public class Block : MonoBehaviour
     int row;
     int col;
 
+    private Vector3 initialPosition;
+
     public int gridX { get; set; }
     public int gridY { get; set; }
     public int type { get; set; }
 
     public GroupEntity blockGroup { get; set; }
 
+    public Tower tower;
+
     private void Start()
     {
         locked = false;
-        isColliding = false;
+        isOverGridSlot = false;
         ResetCanMove();
         collapsed = false;
         zVal = gameObject.transform.position.z;
+        initialPosition = this.transform.position;
     }
 
     void Update()
@@ -50,14 +55,32 @@ public class Block : MonoBehaviour
 		if (!GameManager.PlayOn) {
 			return;
 		}
+
+        if(locked)
+        {
+            return;
+        }
+
         gameObject.GetComponent<Rigidbody>().detectCollisions = false;
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
         offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+
+        tower.currentBlock = this;
     }
 
     private void OnMouseUp()
     {
+        if(!isOverGridSlot)
+        {
+            this.transform.position = this.initialPosition;
+        }
+        else
+        {
+            tower.AddBlock(this);
+        }
+
         gameObject.GetComponent<Rigidbody>().detectCollisions = true;
+        this.tower.currentBlock = null;
     }
 
     void OnMouseDrag()
@@ -68,17 +91,18 @@ public class Block : MonoBehaviour
 
         if (!locked)
         {
-            if (!isColliding)
+            if (!isOverGridSlot)
             {
                 Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
 
                 Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
                 // Reassigns curPosition to rounded values for grid-snapping.
-                curPosition = new Vector3(Mathf.Round(curPosition.x), Mathf.Round(curPosition.y), Mathf.Round(zVal));
+                curPosition = new Vector3(curPosition.x, curPosition.y, Mathf.Round(zVal));
                 transform.position = curPosition;
             }
             else
             {
+                /*
                 foreach (ContactPoint contact in contacts)
                 {
                     if (!IsCornerCollision())
@@ -139,6 +163,7 @@ public class Block : MonoBehaviour
                 {
                     ResetCanMove();
                 }
+                */
             }
         }
     }
@@ -158,13 +183,13 @@ public class Block : MonoBehaviour
 
         return false;
     }
-
+    /*
     private void OnCollisionStay(Collision collision)
     {
         if (!locked)
         {
             contacts = collision.contacts;
-            isColliding = true;
+            isOverGridSlot = true;
 
             if (!locked && !IsCornerCollision())
             {
@@ -178,10 +203,10 @@ public class Block : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        isColliding = false;
+        isOverGridSlot = false;
         ResetCanMove();
     }
-
+    */
     private void ResetCanMove()
     {
         for (int iii = 0; iii < canMove.Length; iii++)

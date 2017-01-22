@@ -17,7 +17,10 @@ public class Tower : MonoBehaviour
     public int gridHeight;
     public int gridWidth;
 
+    public Block blockTemplate;
     public TowerGridSlot towerGridSlot;
+
+    public Block currentBlock { get; set; }
 
     private void BuildGridCells()
     {
@@ -101,28 +104,6 @@ public class Tower : MonoBehaviour
 
     public bool AddBlock(Block block)
     {
-        //var x = block.gridX;
-        //var y = block.gridY;
-
-        //if (x < 0 || x >= gridWidth)
-        //{
-        //    return false;
-        //}
-
-        //if (y < 0 || y >= gridHeight)
-        //{
-        //    return false;
-        //}
-
-        //if (gridCells[x, y].isFilled)
-        //{
-        //    return false;
-        //}
-
-        //this.blockMatrix[y, x] = block;
-        //gridCells[x, y].isFilled = true;
-        //return true;
-
         var x = block.gridX;
         var y = block.gridY;
 
@@ -146,7 +127,10 @@ public class Tower : MonoBehaviour
 
         gridCells[x, y].isFilled = true;
         this.glueBlockMatrix[y, x] = block;
+        block.locked = true;
         this.AddGlues(block);
+
+        Object.Instantiate<Block>(blockTemplate, new Vector3(-6,1,0), Quaternion.identity);
 
         return true;
     }
