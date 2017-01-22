@@ -81,9 +81,9 @@ public class Spawner : MonoBehaviour
             newCube.gridY = (int)transform.position.y;
             newCube.type = currentSelectedBlockType;
 
+            Tower.ClearJointsFromBlock(newCube);
             newCube.gameObject.SetActive(true);
-
-            newCube.gameObject.SetActive(true);
+            
             towerBlock[towerBlockIndex] = newCube;
             hasBlock = true;
 			return towerBlock[towerBlockIndex];

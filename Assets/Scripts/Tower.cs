@@ -17,6 +17,7 @@ public class Tower : MonoBehaviour
     public int gridHeight;
     public int gridWidth;
 
+    //for organisation; contains all gridSlot instances
 	public GameObject GridContainer;
 
     public TowerGridSlot towerGridSlot;
@@ -112,7 +113,7 @@ public class Tower : MonoBehaviour
                     blockSpawner.hasBlock = false;
                     lastBlock = blockSpawner.SpawnBlock();
                     glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
-                   // AddGlues(lastBlock);
+                    //AddGlues(lastBlock);
                     blocks.Add(lastBlock);
                     blocks.Remove(tempBlock);
                     DestroyImmediate(tempBlock.gameObject);
@@ -137,29 +138,35 @@ public class Tower : MonoBehaviour
 
 		Debug.Log ("AddBlock x:" + x + " y:" + y);
 
+        //out of bounds x
         if (x < 2 || x >= gridWidth - 2)
         {
             return false;
         }
 
+        //out of bounds y
         if (y < 2 || y >= gridHeight - 2)
         {
             return false;
         }
 
-        if (gridCells[x, y] != null)
+        //out of bounds (extra)
+        if (gridCells[y, x] == null)
         {
-            if (gridCells[x, y].isFilled)
-            {
-                return false;
-            }
+            return false;
         }
 
-        gridCells[x, y].isFilled = true;
-		gridCells [x, y].block = block;
-		gridCells [x, y].block.InitialPosition = gridCells [x, y].block.gameObject.transform.position;
+        //cell is already ocupied
+        if (gridCells[y, x].isFilled)
+        {
+            return false;
+        }
+
+        gridCells[y, x].isFilled = true;
+        gridCells[y, x].block = block;
+        gridCells[y, x].block.InitialPosition = gridCells[y, x].block.gameObject.transform.position;
         this.glueBlockMatrix[y, x] = block;
-        //this.AddGlues(block);
+        this.AddGlues(block);
 
         return true;
     }
@@ -215,7 +222,7 @@ public class Tower : MonoBehaviour
                 this.glueBlockMatrix[y+1, x+1]
             };
 
-        if(removeCenter)
+        if (removeCenter)
         {
             blockList.Remove(blockList.Single(b => b != null && b.gridX == newX && b.gridY == newY));
         }
@@ -238,7 +245,7 @@ public class Tower : MonoBehaviour
         }
     }
 
-    private void ClearJointsFromBlock(Block block)
+    public static void ClearJointsFromBlock(Block block)
     {
         var joints = block.GetComponents<FixedJoint>();
         foreach(var j in joints)
@@ -315,6 +322,7 @@ public class Tower : MonoBehaviour
         var auxBlockList = CreateBlockList(x + 1, y - 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c1");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             Glue3x3(CreateBlockList(x + 1, y - 1, x, y, false));
@@ -326,6 +334,7 @@ public class Tower : MonoBehaviour
         auxBlockList = CreateBlockList(x + 1, y, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c2");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             Glue3x3(CreateBlockList(x + 1, y, x, y, false));
@@ -337,6 +346,7 @@ public class Tower : MonoBehaviour
         auxBlockList = CreateBlockList(x + 1, y + 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c3");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             Glue3x3(CreateBlockList(x + 1, y + 1, x, y, false));
@@ -348,6 +358,7 @@ public class Tower : MonoBehaviour
         auxBlockList = CreateBlockList(x, y + 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c4");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             Glue3x3(CreateBlockList(x, y + 1, x, y, false));
@@ -359,6 +370,7 @@ public class Tower : MonoBehaviour
         auxBlockList = CreateBlockList(x - 1, y + 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c5");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             Glue3x3(CreateBlockList(x - 1, y + 1, x, y, false));
@@ -370,6 +382,7 @@ public class Tower : MonoBehaviour
         auxBlockList = CreateBlockList(x - 1, y, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c6");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             Glue3x3(CreateBlockList(x - 1, y, x, y, false));
@@ -381,6 +394,7 @@ public class Tower : MonoBehaviour
         auxBlockList = CreateBlockList(x - 1, y - 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c7");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             Glue3x3(CreateBlockList(x - 1, y - 1, x, y, false));
@@ -392,6 +406,7 @@ public class Tower : MonoBehaviour
         auxBlockList = CreateBlockList(x, y - 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c8");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             Glue3x3(CreateBlockList(x, y - 1, x, y, false));
@@ -403,6 +418,7 @@ public class Tower : MonoBehaviour
         auxBlockList = CreateBlockList(x, y, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c9");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             Glue3x3(CreateBlockList(x, y, x, y, false));
@@ -417,6 +433,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c10");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -432,6 +449,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c11");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -447,6 +465,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c12");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -462,6 +481,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c13");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -477,6 +497,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c14");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -495,6 +516,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c15");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -514,6 +536,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c16");
             ProcessGroupEntity(auxBlockList, newBlock);
             
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -533,6 +556,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c17");
             ProcessGroupEntity(auxBlockList, newBlock);
             
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -552,6 +576,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c18");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -571,6 +596,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c19");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -588,6 +614,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c20");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -602,6 +629,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c21");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -616,6 +644,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c22");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -630,6 +659,7 @@ public class Tower : MonoBehaviour
             };
         if (CheckBlocks(auxBlockList, newBlock))
         {
+            Debug.Log("c23");
             ProcessGroupEntity(auxBlockList, newBlock);
 
             var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
@@ -637,6 +667,8 @@ public class Tower : MonoBehaviour
 
             return;
         }
+
+        Debug.Log("no glue");
     }
 
 	public int GetBuilderScore() {
