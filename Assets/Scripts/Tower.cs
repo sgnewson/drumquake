@@ -33,6 +33,11 @@ public class Tower : MonoBehaviour
             for (var x = 2; x < gridWidth - 2; x++)
             {
                 var newCell = Instantiate(towerGridSlot, buildDelta, Quaternion.identity);
+				if (Random.Range (0, 10) == 1) {
+					newCell.isFilled = true;
+					newCell.gameObject.GetComponent<MeshRenderer> ().enabled = false;
+				}
+
                 newCell.gameObject.SetActive(true);
 				newCell.gameObject.transform.parent = GridContainer.transform;
                 buildDelta.x++;
