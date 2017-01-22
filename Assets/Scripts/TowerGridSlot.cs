@@ -13,24 +13,16 @@ public class TowerGridSlot : MonoBehaviour {
 
     private bool mouseDownHere = false;
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     private void OnMouseEnter()
     {
         isSelected = true;
+		//this.GetComponent<Renderer> ().material.color = Color.cyan;
     }
 
     private void OnMouseExit()
     {
         isSelected = false;
+		//this.GetComponent<Renderer> ().material.color = Color.red;
     }
 
     private void OnCollisionStay(Collision collision)

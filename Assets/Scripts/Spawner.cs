@@ -7,6 +7,7 @@ public class Spawner : MonoBehaviour
     public bool hasBlock = false;
     public Block towerBlock;
     public int currentSelectedBlockType { get; set; }
+	public Tower Tower;
 
     private void Start()
     {
@@ -42,6 +43,8 @@ public class Spawner : MonoBehaviour
         if (!hasBlock)
         {
             var newCube = Instantiate(towerBlock, transform.position, Quaternion.identity);
+			newCube.gameObject.name = "Block " + Tower.blocks.Count;
+
             Material material = new Material(Shader.Find("Standard"));
 
             switch (currentSelectedBlockType)

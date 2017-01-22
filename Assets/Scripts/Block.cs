@@ -9,6 +9,7 @@ public class Block : MonoBehaviour
         public List<Block> memberBlocks;
     }
 
+	public Vector3 InitialPosition;
     private Vector3 screenPoint;
     private Vector3 offset;
     private bool isColliding = false;
@@ -38,11 +39,11 @@ public class Block : MonoBehaviour
 
     void Update()
     {
-        //if (this.transform.position.y < -1)
-        //{
-        //    tower.glueBlockMatrix[gridY, gridX] = null;
-        //    Destroy(this);
-        //}
+		// enforce an integer position when you're building
+		if (!GameManager.PlayOn) {
+			return;
+		}
+		gameObject.transform.position = new Vector3 (Mathf.RoundToInt (gameObject.transform.position.x), Mathf.RoundToInt (gameObject.transform.position.y), Mathf.RoundToInt (gameObject.transform.position.z));
     }
 
     void OnMouseDown()
@@ -73,9 +74,16 @@ public class Block : MonoBehaviour
                 Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
 
                 Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
+				Debug.Log ("curPosition y: " + curPosition.y);
+
+				if (curPosition.y < 0) {
+					return;
+				}
+
                 // Reassigns curPosition to rounded values for grid-snapping.
                 curPosition = new Vector3(Mathf.Round(curPosition.x), Mathf.Round(curPosition.y), Mathf.Round(zVal));
                 transform.position = curPosition;
+				//Debug.Log ("Drag pos x: " + curPosition.x + " y: " + curPosition.y);
             }
             else
             {
@@ -162,11 +170,15 @@ public class Block : MonoBehaviour
     private void OnCollisionStay(Collision collision)
     {
         if (!locked)
-        {
+		{
             contacts = collision.contacts;
             isColliding = true;
 
-            if (!locked && !IsCornerCollision())
+			bool cornerTest = IsCornerCollision ();
+
+			Debug.Log ("Corner test: " + cornerTest);
+
+			if (!locked && !cornerTest)
             {
                 locked = true;
                 GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;

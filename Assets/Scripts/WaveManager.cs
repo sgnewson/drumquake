@@ -10,8 +10,10 @@ public class WaveManager : MonoBehaviour {
 	const float waveSpawnDelay = 0.5f;
 	const float waveStartRadius = 1f;
 	const float waveShrinkRate = 0.5f;
-	const int EarthquakeTimerStartCount = 60;
+	const int EarthquakeTimerStartCount = 10;
 	const int CutSceneTimerCount = 10;
+
+	public Tower tower;
 
 	public float HeartBeatInMilliseconds = 300f;
 	int beatCount;
@@ -117,7 +119,7 @@ public class WaveManager : MonoBehaviour {
 
 	void SpawnWave(XboxButton waveType) {
 
-		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefabLocal, new Vector3 (0f, 0f, 0f), Quaternion.identity);
+		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefabLocal, ReferenceWave.transform.position, Quaternion.identity);
 		newWaveGameObject.SetActive (true);
 
 		newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = ColorMap[waveType].circle;
@@ -131,17 +133,26 @@ public class WaveManager : MonoBehaviour {
 
         if (EarthquakeTimerCount <= 0)
         {
-            MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000f);
-			WaveScore = 0;
-            EarthquakeTimerCount = EarthquakeTimerStartCount + CutSceneTimerCount;
-            GameManager.PlayOn = false;
-            EarthquakeTimerUI.text = "Earthquake!!!!";
+			EarthquakeTimerUI.text = "Countdown: 0";
+			GameManager.PlayOn = false;
+			Invoke ("StartEarthquake", 5f);
+			tower.HandleBeforeEarthquake ();
         }
         else if (EarthquakeTimerCount <= EarthquakeTimerStartCount)
         {
+			tower.HandleAfterEarthquake ();
+
             GameManager.PlayOn = true;
             EarthquakeTimerUI.text = "Countdown: " + EarthquakeTimerCount;
         }
+	}
+
+	void StartEarthquake() {
+		//MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000f);
+		MainCamera.GetComponent<Earthquake>().EarthquakeMeDaddy(0.03f);
+		WaveScore = 0;
+		EarthquakeTimerCount = EarthquakeTimerStartCount + CutSceneTimerCount;
+		EarthquakeTimerUI.text = "Earthquake!!!!";
 	}
 
 	void Update() {

@@ -10,7 +10,25 @@ public class Earthquake : MonoBehaviour
     public float shake_decay;
     public float shake_intensity;
 
+	public GameObject BasePlate;
+	int baseShakeCount;
+	Vector3 intialBasePos;
+	float elapsedShakeTime;
+
     public float speed = 0.1f;
+
+	public void EarthquakeMeDaddy(float magnitude) {
+		foreach (Block block in tower.glueBlockMatrix)
+		{
+			if (block != null)
+			{
+				block.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+				block.GetComponent<Rigidbody>().useGravity = true;
+			}
+		}
+
+		Shake(magnitude);
+	}
 
     void Update()
     {
@@ -28,19 +46,6 @@ public class Earthquake : MonoBehaviour
 
     void UpdateCameraShake()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            foreach (Block block in tower.glueBlockMatrix)
-            {
-                if (block != null)
-                {
-                    block.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-                    block.GetComponent<Rigidbody>().useGravity = true;
-                }
-            }
-
-            Shake(0.3f);
-        }
         if (shake_intensity > 0)
         {
             gameObject.transform.position = originPosition + Random.insideUnitSphere * shake_intensity;
@@ -54,16 +59,46 @@ public class Earthquake : MonoBehaviour
         Debug.Log("Quake Magnitude: " + shakeIntensity);
         originPosition = transform.position;
 
-        foreach (Block block in tower.glueBlockMatrix)
-        {
-            if (block != null)
-            {
-                block.transform.position = transform.position;
-            }
-        }
+		intialBasePos = BasePlate.transform.position;
+
+		elapsedShakeTime = 0f;
+		baseShakeCount = 0;
+		Invoke ("StopShakeBase", 10f);
+		InvokeRepeating ("ShakeBase", 0f, 0.2f);
 
         originRotation = transform.rotation;
         shake_intensity = shakeIntensity;
         shake_decay = 0.002f;
     }
+
+	void ShakeBase() {
+		baseShakeCount++;
+
+		if (baseShakeCount % 2 == 0) {
+			// powerful
+			float xOffset = Random.Range (-0.2f, 0.2f);
+			float yOffset = Random.Range (-0.1f, 0.1f);
+			float zOffset = Random.Range (-0.2f, 0.2f);
+
+			BasePlate.transform.position = new Vector3 (BasePlate.transform.position.x + xOffset, BasePlate.transform.position.y + yOffset, BasePlate.transform.position.z + zOffset);
+
+		} else {
+			BasePlate.transform.position = intialBasePos;
+		}
+	}
+
+	void StopShakeBase() {
+		for (int x = 0; x < tower.gridHeight; x++) {
+			for (int y = 0; y < tower.gridWidth; y++) {
+				if (tower.gridCells [x, y] != null && tower.gridCells [x, y].block != null) {
+					tower.gridCells [x, y].block.gameObject.transform.position = tower.gridCells [x, y].block.InitialPosition;
+					tower.gridCells [x, y].block.gameObject.transform.rotation = Quaternion.identity;
+					tower.gridCells [x, y].block.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+					tower.gridCells [x, y].block.GetComponent<Rigidbody>().useGravity = false;
+				}
+			}
+		}
+
+		CancelInvoke ("ShakeBase");
+	}
 }

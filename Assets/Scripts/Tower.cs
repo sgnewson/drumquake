@@ -12,10 +12,12 @@ public class Tower : MonoBehaviour
     public Block[,] glueBlockMatrix;
     //public Block[,] blockMatrix;
     public List<Block> blocks;
-    private Block lastBlock;
+	private Block lastBlock;
 
     public int gridHeight;
     public int gridWidth;
+
+	public GameObject GridContainer;
 
     public TowerGridSlot towerGridSlot;
 
@@ -31,6 +33,7 @@ public class Tower : MonoBehaviour
             {
                 var newCell = Instantiate(towerGridSlot, buildDelta, Quaternion.identity);
                 newCell.gameObject.SetActive(true);
+				newCell.gameObject.transform.parent = GridContainer.transform;
                 buildDelta.x++;
 
                 newCell.gridX = x;
@@ -40,6 +43,16 @@ public class Tower : MonoBehaviour
             buildDelta.y++;
         }
     }
+
+	public void HandleBeforeEarthquake() {
+		lastBlock.gameObject.SetActive (false);
+	}
+
+	public void HandleAfterEarthquake() {
+		lastBlock.gameObject.SetActive (true);
+		lastBlock.gameObject.GetComponent<Rigidbody> ().useGravity = false;
+		lastBlock.gameObject.GetComponent<Rigidbody> ().constraints = RigidbodyConstraints.FreezeRotation;
+	}
 
  	// Use this for initialization
 	void Start ()
@@ -52,18 +65,35 @@ public class Tower : MonoBehaviour
 
         BuildGridCells();
         if (!blockSpawner) { return; }
-        blockSpawner = Instantiate(blockSpawner, new Vector3(5, 5), Quaternion.identity);
+        
         lastBlock = blockSpawner.SpawnBlock();
         glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
         AddGlues(lastBlock);
         blocks.Add(lastBlock);
     }
 
+	void PrintAllBlocks() {
+		int x = 0;
+		string output = "";
+
+		foreach (Block b in blocks) {
+			output += " b " + x + " locked:" + b.locked;
+			x++;
+		}
+
+		Debug.Log (output);
+	}
+
     // Update is called once per frame
     void Update ()
     {
+		if (!GameManager.PlayOn) {
+			return;
+		}
+
         if (blocks.Count != 0)
         {
+			PrintAllBlocks ();
             if (blocks[blocks.Count - 1].locked)
             {
                 if (AddBlock(lastBlock))
@@ -71,16 +101,18 @@ public class Tower : MonoBehaviour
                     blockSpawner.hasBlock = false;
                     lastBlock = blockSpawner.SpawnBlock();
                     glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
-                    AddGlues(lastBlock);
+                    //AddGlues(lastBlock);
                     blocks.Add(lastBlock);
+					Debug.Log ("Add block success. Last block: " + lastBlock.gameObject.name);
                 }
                 else
                 {
+					Debug.Log ("Add block false so reset the block. Last block: " + lastBlock.gameObject.name);
                     Block tempBlock = lastBlock;
                     blockSpawner.hasBlock = false;
                     lastBlock = blockSpawner.SpawnBlock();
                     glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
-                    AddGlues(lastBlock);
+                   // AddGlues(lastBlock);
                     blocks.Add(lastBlock);
                     blocks.Remove(tempBlock);
                     DestroyImmediate(tempBlock.gameObject);
@@ -98,33 +130,12 @@ public class Tower : MonoBehaviour
         }
     }
 
-
     public bool AddBlock(Block block)
     {
-        //var x = block.gridX;
-        //var y = block.gridY;
-
-        //if (x < 0 || x >= gridWidth)
-        //{
-        //    return false;
-        //}
-
-        //if (y < 0 || y >= gridHeight)
-        //{
-        //    return false;
-        //}
-
-        //if (gridCells[x, y].isFilled)
-        //{
-        //    return false;
-        //}
-
-        //this.blockMatrix[y, x] = block;
-        //gridCells[x, y].isFilled = true;
-        //return true;
-
         var x = block.gridX;
         var y = block.gridY;
+
+		Debug.Log ("AddBlock x:" + x + " y:" + y);
 
         if (x < 2 || x >= gridWidth - 2)
         {
@@ -145,38 +156,13 @@ public class Tower : MonoBehaviour
         }
 
         gridCells[x, y].isFilled = true;
+		gridCells [x, y].block = block;
+		gridCells [x, y].block.InitialPosition = gridCells [x, y].block.gameObject.transform.position;
         this.glueBlockMatrix[y, x] = block;
-        this.AddGlues(block);
+        //this.AddGlues(block);
 
         return true;
     }
-
-    //public bool AddTowerBlock(TowerBlock newBlock)
-    //{
-    //    var x = newBlock.gridX;
-    //    var y = newBlock.gridY;
-
-    //    if (x < 2 || x >= gridWidth - 2)
-    //    {
-    //        return false;
-    //    }
-
-    //    if (y < 2 || y >= gridHeight - 2)
-    //    {
-    //        return false;
-    //    }
-
-    //    if (gridCells[x, y].isFilled)
-    //    {
-    //        return false;
-    //    }
-
-    //    gridCells[x, y].isFilled = true;
-    //    this.glueBlockMatrix[y, x] = newBlock;
-    //    this.AddGlues(newBlock);
-
-    //    return true;
-    //}
 
     private bool CheckBlock(Block oldBlock, Block newBlock)
     {
@@ -324,33 +310,7 @@ public class Tower : MonoBehaviour
     {
         var x = newBlock.gridX;
         var y = newBlock.gridY;
-        /*
-        var b11 = this.glueBlockMatrix[y - 2, x - 2];
-        var b12 = this.glueBlockMatrix[y - 2, x - 1];
-        var b13 = this.glueBlockMatrix[y - 2, x];
-        var b14 = this.glueBlockMatrix[y - 2, x + 1];
-        var b15 = this.glueBlockMatrix[y - 2, x + 2];
-        var b21 = this.glueBlockMatrix[y - 1, x - 2];
-        var b22 = this.glueBlockMatrix[y - 1, x - 1];
-        var b23 = this.glueBlockMatrix[y - 1, x];
-        var b24 = this.glueBlockMatrix[y - 1, x + 1];
-        var b25 = this.glueBlockMatrix[y - 1, x + 2];
-        var b31 = this.glueBlockMatrix[y, x - 2];
-        var b32 = this.glueBlockMatrix[y, x - 1];
-        var b33 = this.glueBlockMatrix[y, x];
-        var b34 = this.glueBlockMatrix[y, x + 1];
-        var b35 = this.glueBlockMatrix[y, x + 2];
-        var b41 = this.glueBlockMatrix[y + 1, x - 2];
-        var b42 = this.glueBlockMatrix[y + 1, x - 1];
-        var b43 = this.glueBlockMatrix[y + 1, x];
-        var b44 = this.glueBlockMatrix[y + 1, x + 1];
-        var b45 = this.glueBlockMatrix[y + 1, x + 2];
-        var b51 = this.glueBlockMatrix[y + 2, x - 2];
-        var b52 = this.glueBlockMatrix[y + 2, x - 1];
-        var b53 = this.glueBlockMatrix[y + 2, x];
-        var b54 = this.glueBlockMatrix[y + 2, x + 1];
-        var b55 = this.glueBlockMatrix[y + 2, x + 2];
-        */
+
         //c1
         var auxBlockList = CreateBlockList(x + 1, y - 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
