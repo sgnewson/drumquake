@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using XboxCtrlrInput;
 
 public class Tower : MonoBehaviour
 {
@@ -22,11 +23,17 @@ public class Tower : MonoBehaviour
 
     public TowerGridSlot towerGridSlot;
 
+    public Block[] towerBlocks;
+
+    public Block currentBlock { get; set; }
+
+    private Dictionary<XboxButton, int> dict;
+
     private void BuildGridCells()
     {
         gridCells = new TowerGridSlot[gridHeight, gridWidth];
 
-        var buildDelta = new Vector3(0, 0, 0);
+        var buildDelta = new Vector3(0, 0.5f, 0);
         for (var y = 2; y < gridHeight - 2; y++)
         {
             buildDelta.x = 0;
@@ -63,6 +70,12 @@ public class Tower : MonoBehaviour
  	// Use this for initialization
 	void Start ()
     {
+        dict = new Dictionary<XboxButton, int>();
+        dict.Add(XboxButton.A, 0);
+        dict.Add(XboxButton.X, 1);
+        dict.Add(XboxButton.Y, 2);
+        dict.Add(XboxButton.B, 3);
+
         gridHeight = 15 + 4;
         gridWidth = 8 + 4;
 
@@ -97,9 +110,32 @@ public class Tower : MonoBehaviour
 			return;
 		}
 
+        if (Input.GetMouseButton(0))
+        {
+            print(this.currentBlock);
+            if (this.currentBlock)
+            {
+                if(!this.currentBlock.wasClicked)
+                {
+                    return;
+                }
+                this.currentBlock.DoMove();
+            }
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            print(this.currentBlock);
+            if (this.currentBlock)
+            {
+                this.currentBlock.DoPlace();
+            }
+        }
+
         if (blocks.Count != 0)
         {
 			PrintAllBlocks ();
+            /*
             if (blocks[blocks.Count - 1].locked)
             {
                 if (AddBlock(lastBlock))
@@ -127,8 +163,11 @@ public class Tower : MonoBehaviour
                     DestroyImmediate(tempBlock.gameObject);
                 }
             }
+            */
         }
 
+        //should be handled by block collision
+        /*
         foreach (Block block in blocks)
         {
             if (block.transform.position.y + 2 < -1)
@@ -137,6 +176,7 @@ public class Tower : MonoBehaviour
                 Destroy(this);
             }
         }
+        */
     }
 
     public bool AddBlock(Block block)
@@ -170,13 +210,36 @@ public class Tower : MonoBehaviour
             return false;
         }
 
+        if (!glueBlockMatrix[y, x-1]
+            && !glueBlockMatrix[y, x+1]
+            && !glueBlockMatrix[y+1, x]
+            && !glueBlockMatrix[y-1, x]
+            && y != 2)
+        {
+            return false;
+        }
+
+        print("adding block now");
+
         gridCells[y, x].isFilled = true;
         gridCells[y, x].block = block;
-        gridCells[y, x].block.InitialPosition = gridCells[y, x].block.gameObject.transform.position;
+        //gridCells[y, x].block.InitialPosition = gridCells[y, x].block.gameObject.transform.position;
         this.glueBlockMatrix[y, x] = block;
+        block.locked = true;
         this.AddGlues(block);
+        blocks.Add(block);
+
+        CreateNewBlock();
 
         return true;
+    }
+
+    private void CreateNewBlock()
+    {
+        int towerBlockIndex = dict[GameManager.LastHitType];
+        var newCube = Instantiate(towerBlocks[towerBlockIndex], new Vector3(-6, 1, 0), Quaternion.identity);
+        newCube.type = towerBlockIndex;
+        newCube.gameObject.SetActive(true);
     }
 
     private bool CheckBlock(Block oldBlock, Block newBlock)
