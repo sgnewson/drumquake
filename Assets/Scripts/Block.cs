@@ -11,6 +11,7 @@ public class Block : MonoBehaviour
     private bool[] canMove = { true, true, true, true };
     public bool locked = false;
     public bool collapsed = false;
+    private float zVal;
     int row;
     int col;
 
@@ -19,13 +20,11 @@ public class Block : MonoBehaviour
 
     private void Start()
     {
-        gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
-        gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ;
-
         locked = false;
         isColliding = false;
         ResetCanMove();
         collapsed = false;
+        zVal = gameObject.transform.position.z;
     }
 
     void OnMouseDown()
@@ -57,7 +56,7 @@ public class Block : MonoBehaviour
 
                 Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
                 // Reassigns curPosition to rounded values for grid-snapping.
-                curPosition = new Vector3(Mathf.Round(curPosition.x), Mathf.Round(curPosition.y), Mathf.Round(curPosition.z));
+                curPosition = new Vector3(Mathf.Round(curPosition.x), Mathf.Round(curPosition.y), Mathf.Round(zVal));
                 transform.position = curPosition;
             }
             else
@@ -94,7 +93,7 @@ public class Block : MonoBehaviour
                 Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
 
                 // Reassigns curPosition to rounded values for grid-snapping.
-                curPosition = new Vector3(Mathf.Round(curPosition.x), Mathf.Round(curPosition.y), Mathf.Round(curPosition.z));
+                curPosition = new Vector3(Mathf.Round(curPosition.x), Mathf.Round(curPosition.y), Mathf.Round(zVal));
 
                 if (!canMove[(int)Faces.LEFT] && curPosition.x < transform.position.x)
                 {
