@@ -273,20 +273,15 @@ public class WaveManager : MonoBehaviour {
 	private int GetNewScore(int currentScore, XboxButton pressed, DrumHitQuality quality) {
 		switch (quality) {
 		case DrumHitQuality.Hit: 
-		return currentScore + ColorMap[pressed].hitScore;
-			break;
+			return currentScore + ColorMap[pressed].hitScore;
 		case DrumHitQuality.Close:
 			return currentScore + ColorMap[pressed].hitScore/5;
-			break;
 		case DrumHitQuality.Miss:
 			return currentScore - ColorMap[pressed].hitScore/2;
-			break;
 		case DrumHitQuality.Ignored:
 			return currentScore - 5; //Can't use button pressed because none was pressed when ignored
-			break;
 		case DrumHitQuality.Incorrect:
 			return currentScore - ColorMap[pressed].hitScore/2;
-			break;
 		default:
 			return currentScore;
 		}
