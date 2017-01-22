@@ -237,7 +237,7 @@ public class Tower : MonoBehaviour
     private void CreateNewBlock()
     {
         int towerBlockIndex = dict[GameManager.LastHitType];
-        var newCube = Instantiate(towerBlocks[towerBlockIndex], new Vector3(-6, 1, 0), Quaternion.identity);
+        var newCube = Instantiate(towerBlocks[towerBlockIndex], new Vector3(-5.37f, -0.64f, -2.89f), Quaternion.identity);
         newCube.type = towerBlockIndex;
         newCube.gameObject.SetActive(true);
     }
