@@ -16,13 +16,35 @@ public class TowerGridSlot : MonoBehaviour {
     private void OnMouseEnter()
     {
         isSelected = true;
-		//this.GetComponent<Renderer> ().material.color = Color.cyan;
+        //this.GetComponent<Renderer> ().material.color = Color.cyan;
+
+        if(isFilled)
+        {
+            return;
+        }
+
+        if (tower.currentBlock)
+        {
+            if(!tower.currentBlock.wasClicked)
+            {
+                return;
+            }
+
+            tower.currentBlock.isOverGridSlot = true;
+            tower.currentBlock.gridX = this.gridX;
+            tower.currentBlock.gridY = this.gridY;
+            tower.currentBlock.transform.position = transform.position;
+        }
     }
 
     private void OnMouseExit()
     {
         isSelected = false;
-		//this.GetComponent<Renderer> ().material.color = Color.red;
+        //this.GetComponent<Renderer> ().material.color = Color.red;if (tower.currentBlock)
+        if(tower.currentBlock)
+        {
+            tower.currentBlock.isOverGridSlot = false;
+        }
     }
 
     private void OnCollisionStay(Collision collision)

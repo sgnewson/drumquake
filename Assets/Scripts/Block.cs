@@ -11,8 +11,9 @@ public class Block : MonoBehaviour
 
 	public Vector3 InitialPosition;
     private Vector3 screenPoint;
+	public int Score = 0;
     private Vector3 offset;
-    private bool isColliding = false;
+    public bool isOverGridSlot { get; set; }
     private ContactPoint[] contacts;
     private enum Faces { TOP, BOTTOM, LEFT, RIGHT };
     private bool[] canMove = { true, true, true, true };
@@ -24,6 +25,8 @@ public class Block : MonoBehaviour
 
 	public bool fellOffBase;
 
+	public bool wasClicked { set; get; }
+
     public int gridX { get; set; }
     public int gridY { get; set; }
     public int type { get; set; }
@@ -32,15 +35,19 @@ public class Block : MonoBehaviour
 
 	SoundEffectManager soundEffectManager;
 
+    public Tower tower;
+
     private void Start()
     {
 		soundEffectManager = GameObject.Find ("SoundEffectManager").GetComponent<SoundEffectManager> ();
 		fellOffBase = false;
         locked = false;
-        isColliding = false;
+        isOverGridSlot = false;
         ResetCanMove();
         collapsed = false;
         zVal = gameObject.transform.position.z;
+        InitialPosition = this.transform.position;
+        wasClicked = false;
     }
 
     void Update()
@@ -49,7 +56,8 @@ public class Block : MonoBehaviour
 		if (!GameManager.PlayOn) {
 			return;
 		}
-		gameObject.transform.position = new Vector3 (Mathf.RoundToInt (gameObject.transform.position.x), Mathf.RoundToInt (gameObject.transform.position.y), Mathf.RoundToInt (gameObject.transform.position.z));
+        //gameObject.transform.position = new Vector3 (Mathf.RoundToInt (gameObject.transform.position.x), Mathf.RoundToInt (gameObject.transform.position.y), Mathf.RoundToInt (gameObject.transform.position.z));
+
     }
 
     void OnMouseDown()
@@ -57,18 +65,37 @@ public class Block : MonoBehaviour
 		if (!GameManager.PlayOn) {
 			return;
 		}
+
+        if(locked)
+        {
+            return;
+        }
+
+        this.wasClicked = true;
+        print("clicked");
+
         gameObject.GetComponent<Rigidbody>().detectCollisions = false;
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
         offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
 		soundEffectManager.PlayPickupBlockSound ();
+        tower.currentBlock = this;
+
     }
 
-    private void OnMouseUp()
+    public void DoPlace()
     {
         gameObject.GetComponent<Rigidbody>().detectCollisions = true;
+        wasClicked = false;
+        this.tower.currentBlock = null;
+
+        if (!isOverGridSlot || !tower.AddBlock(this))
+        {
+            this.transform.position = this.InitialPosition;
+            this.isOverGridSlot = false;
+        }
     }
 
-    void OnMouseDrag()
+    public void DoMove()
 	{
 		if (!GameManager.PlayOn) {
 			return;
@@ -76,7 +103,7 @@ public class Block : MonoBehaviour
 
         if (!locked)
         {
-            if (!isColliding)
+            if (!isOverGridSlot)
             {
                 Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
 
@@ -88,12 +115,13 @@ public class Block : MonoBehaviour
 				}
 
                 // Reassigns curPosition to rounded values for grid-snapping.
-                curPosition = new Vector3(Mathf.Round(curPosition.x), Mathf.Round(curPosition.y), Mathf.Round(zVal));
+                curPosition = new Vector3(curPosition.x, curPosition.y, Mathf.Round(zVal));
                 transform.position = curPosition;
 				//Debug.Log ("Drag pos x: " + curPosition.x + " y: " + curPosition.y);
             }
             else
             {
+                /*
                 foreach (ContactPoint contact in contacts)
                 {
                     if (!IsCornerCollision())
@@ -154,6 +182,7 @@ public class Block : MonoBehaviour
                 {
                     ResetCanMove();
                 }
+                */
             }
         }
     }
@@ -173,13 +202,13 @@ public class Block : MonoBehaviour
 
         return false;
     }
-
+    /*
     private void OnCollisionStay(Collision collision)
     {
         if (!locked)
 		{
             contacts = collision.contacts;
-            isColliding = true;
+            isOverGridSlot = true;
 
 			bool cornerTest = IsCornerCollision ();
 
@@ -195,7 +224,7 @@ public class Block : MonoBehaviour
             }
         }
     }
-
+    */
 	private void OnCollisionEnter(Collision collision) {
 		if (collision.collider.name == "Terrain") {
 			Debug.Log ("Kill block: " + this.gameObject.name);
@@ -203,13 +232,13 @@ public class Block : MonoBehaviour
 			fellOffBase = true;
 		}
 	}
-
+    /*
     private void OnCollisionExit(Collision collision)
     {
-        isColliding = false;
+        isOverGridSlot = false;
         ResetCanMove();
     }
-
+    */
     private void ResetCanMove()
     {
         for (int iii = 0; iii < canMove.Length; iii++)
