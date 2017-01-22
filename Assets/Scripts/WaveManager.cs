@@ -73,6 +73,7 @@ public class WaveManager : MonoBehaviour {
 
 	AudioSource audioSource;
 
+	private enum DrumHitQuality { Hit, Close, Miss, Ignored, Incorrect };
 	public enum LerpMode {Linear, EaseOut, EaseIn, Exponential, SmoothStep, SmootherStep};
 	public LerpMode TransitionLerpMode;
 
@@ -207,7 +208,7 @@ public class WaveManager : MonoBehaviour {
 		}
 		wave.AttemptedHit = true;
 	}
-
+		
 	private void  WaveHit (XboxButton buttonPressed)
 	{
 		audioSource.clip = ColorMap[buttonPressed].thisClip;
@@ -217,7 +218,7 @@ public class WaveManager : MonoBehaviour {
 
 		HitResult.sprite = Perfect;
 
-		WaveScore += 10;
+		WaveScore = GetNewScore(WaveScore, buttonPressed, DrumHitQuality.Hit);
 
 		IntensifyLight (2f);
 	}
@@ -231,7 +232,7 @@ public class WaveManager : MonoBehaviour {
 
 		HitResult.sprite = Good;
 
-		WaveScore += 2;
+		WaveScore = GetNewScore(WaveScore, buttonPressed, DrumHitQuality.Close);
 
 		IntensifyLight (1.3f);
 	}
@@ -245,13 +246,13 @@ public class WaveManager : MonoBehaviour {
 
 		HitResult.sprite = Miss;
 
-		WaveScore -= 5;
+		WaveScore = GetNewScore(WaveScore, buttonPressed, DrumHitQuality.Miss);
 	}
 
 	private void  WaveIgnored ()
 	{
 		HitResult.sprite = Miss;
-		WaveScore -= 2;
+		WaveScore = GetNewScore(WaveScore, XboxButton.DPadDown, DrumHitQuality.Miss); //DPadDown is just so we have something here
 	}
 
 	private void  WaveIncorrect (XboxButton buttonPressed)
@@ -263,7 +264,29 @@ public class WaveManager : MonoBehaviour {
 
 		HitResult.sprite = Miss;
 	
-		WaveScore -= 7;
+		WaveScore = GetNewScore(WaveScore, buttonPressed, DrumHitQuality.Incorrect);
+	}
+
+	private int GetNewScore(int currentScore, XboxButton pressed, DrumHitQuality quality) {
+		switch (quality) {
+			case DrumHitQuality.Hit: 
+				return currentScore + 10;
+				break;
+			case DrumHitQuality.Close:
+				return currentScore + 2;
+				break;
+			case DrumHitQuality.Miss:
+				return currentScore - 5;
+				break;
+			case DrumHitQuality.Ignored:
+				return currentScore - 2;
+				break;
+			case DrumHitQuality.Incorrect:
+				return currentScore - 7;
+				break;
+			default:
+				return currentScore;
+		}
 	}
 
 	void IntensifyLight(float multiplier) {
