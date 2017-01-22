@@ -16,7 +16,7 @@ public class WaveManager : MonoBehaviour {
 	public float HeartBeatInMilliseconds = 300f;
 	int beatCount;
 
-	private float WaveScore = 0f;
+	private int WaveScore = 0;
 	private int EarthquakeTimerCount = EarthquakeTimerStartCount;
 
 	public Text EarthquakeTimerUI;
@@ -42,12 +42,7 @@ public class WaveManager : MonoBehaviour {
 
 	Dictionary<XboxButton, AudioStuff> ColorMap;
 
-	public DrumPattern EasyPattern;
-	public DrumPattern MediumPattern;
-	public DrumPattern MediumHardPattern;
-	public DrumPattern HardPattern;
-
-	DrumPattern CurrentPattern;
+	DrumPatterns.DrumPattern CurrentPattern;
 
 	Dictionary<XboxButton, AudioStuff> clipForButton;
 
@@ -89,7 +84,8 @@ public class WaveManager : MonoBehaviour {
 		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
 
-		SetupPatterns ();
+		DrumPatterns.SetupPatterns ();
+		CurrentPattern = DrumPatterns.GetCurrentPattern(WaveScore);
 
 		InvokeRepeating ("Heartbeat", 0f, HeartBeatInMilliseconds / 1000f);
 
@@ -108,7 +104,7 @@ public class WaveManager : MonoBehaviour {
 
 		if (beatCount > 16) {
 			// Check score and set the next pattern appropriately
-			CurrentPattern = GetCurrentPattern();
+			CurrentPattern = DrumPatterns.GetCurrentPattern(WaveScore);
 			beatCount = 1;
 		}
 
@@ -116,19 +112,6 @@ public class WaveManager : MonoBehaviour {
 
 		if (CurrentPattern.Dict.ContainsKey (beatCount) == true) {
 			SpawnWave (CurrentPattern.Dict [beatCount]);
-		}
-	}
-
-	DrumPattern GetCurrentPattern() {
-		// use the score to determine the correct pattern and return it
-		if (WaveScore < 150) {
-			return EasyPattern;
-		} else if (WaveScore < 300) {
-			return MediumPattern;
-		} else if (WaveScore < 450) {
-			return MediumHardPattern;
-		} else { 
-			return HardPattern;
 		}
 	}
 
@@ -148,7 +131,7 @@ public class WaveManager : MonoBehaviour {
 
         if (EarthquakeTimerCount <= 0)
         {
-            MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000);
+            MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000f);
 			WaveScore = 0;
             EarthquakeTimerCount = EarthquakeTimerStartCount + CutSceneTimerCount;
             GameManager.PlayOn = false;
@@ -180,7 +163,7 @@ public class WaveManager : MonoBehaviour {
 		WaveList = WavesToKeep;
 		WaveScore = Mathf.Max(0, WaveScore);
 
-		WaveScoreUI.text = "Magnitude: " + WaveScore/100;
+		WaveScoreUI.text = "Magnitude: " + WaveScore/100f;
 	}
 
 	public void HandleDrumPress(XboxButton buttonPressed) {
@@ -267,50 +250,6 @@ public class WaveManager : MonoBehaviour {
 		WaveScore -= 7;
 	}
 
-	void SetupPatterns() {
-		EasyPattern = new DrumPattern ();
-		EasyPattern.Dict.Add (2, XboxButton.A);
-		EasyPattern.Dict.Add (4, XboxButton.A);
-		EasyPattern.Dict.Add (6, XboxButton.A);
-		EasyPattern.Dict.Add (8, XboxButton.A);
-		EasyPattern.Dict.Add (10, XboxButton.A);
-		EasyPattern.Dict.Add (12, XboxButton.A);
-		EasyPattern.Dict.Add (14, XboxButton.A);
-		EasyPattern.Dict.Add (16, XboxButton.A);
-
-		MediumPattern = new DrumPattern ();
-		MediumPattern.Dict.Add (2, XboxButton.A);
-		MediumPattern.Dict.Add (4, XboxButton.A);
-		MediumPattern.Dict.Add (6, XboxButton.X);
-		MediumPattern.Dict.Add (8, XboxButton.A);
-		MediumPattern.Dict.Add (10, XboxButton.A);
-		MediumPattern.Dict.Add (12, XboxButton.A);
-		MediumPattern.Dict.Add (14, XboxButton.X);
-		MediumPattern.Dict.Add (16, XboxButton.A);
-
-		MediumHardPattern = new DrumPattern ();
-		MediumHardPattern.Dict.Add (2, XboxButton.A);
-		MediumHardPattern.Dict.Add (4, XboxButton.A);
-		MediumHardPattern.Dict.Add (6, XboxButton.X);
-		MediumHardPattern.Dict.Add (8, XboxButton.Y);
-		MediumHardPattern.Dict.Add (10, XboxButton.A);
-		MediumHardPattern.Dict.Add (12, XboxButton.A);
-		MediumHardPattern.Dict.Add (14, XboxButton.X);
-		MediumHardPattern.Dict.Add (16, XboxButton.Y);
-
-		HardPattern = new DrumPattern ();
-		MediumHardPattern.Dict.Add (2, XboxButton.A);
-		MediumHardPattern.Dict.Add (4, XboxButton.A);
-		MediumHardPattern.Dict.Add (6, XboxButton.X);
-		MediumHardPattern.Dict.Add (7, XboxButton.Y);
-		MediumHardPattern.Dict.Add (10, XboxButton.A);
-		MediumHardPattern.Dict.Add (12, XboxButton.A);
-		MediumHardPattern.Dict.Add (14, XboxButton.X);
-		MediumHardPattern.Dict.Add (15, XboxButton.Y);
-
-		CurrentPattern = EasyPattern;
-	}
-
 	void IntensifyLight(float multiplier) {
 		FeedbackLight.intensity *= multiplier;
 		StartCoroutine ("resetLightIntensity");
@@ -330,14 +269,6 @@ public class WaveManager : MonoBehaviour {
 			thisClip = c;
 			Volume = v;
 			this.circle = circle;
-		}
-	}
-
-	public class DrumPattern {
-		public Dictionary<int, XboxButton> Dict;
-
-		public DrumPattern() {
-			Dict = new Dictionary<int, XboxButton>();
 		}
 	}
 }
