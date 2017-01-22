@@ -105,8 +105,11 @@ public class Tower : MonoBehaviour
                 if (AddBlock(lastBlock))
                 {
                     blockSpawner.hasBlock = false;
+					lastBlock.Score = lastBlock.gridY / 2;
+					Debug.Log ("Score: " + lastBlock.Score);
                     lastBlock = blockSpawner.SpawnBlock();
                     glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
+
                     //AddGlues(lastBlock);
                     blocks.Add(lastBlock);
 					Debug.Log ("Add block success. Last block: " + lastBlock.gameObject.name);
@@ -677,12 +680,14 @@ public class Tower : MonoBehaviour
     }
 
 	public int GetBuilderScore() {
-		int count = -1;
+		int totalScore = 0;
+		Debug.Log ("Reset total score");
 		foreach (Block b in blocks) {
-			if (!b.fellOffBase) {
-				count++;
+			if (!b.fellOffBase && b.locked == true) {
+				totalScore += b.Score;
+				Debug.Log (b.gameObject.name + " totalScore: " + totalScore + " b score: " + b.Score);
 			}
 		}
-		return count;
+		return totalScore;
 	}
 }

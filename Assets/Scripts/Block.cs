@@ -11,6 +11,7 @@ public class Block : MonoBehaviour
 
 	public Vector3 InitialPosition;
     private Vector3 screenPoint;
+	public int Score = 0;
     private Vector3 offset;
     private bool isColliding = false;
     private ContactPoint[] contacts;
