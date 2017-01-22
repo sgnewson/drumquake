@@ -83,21 +83,9 @@ public class Tower : MonoBehaviour
         {
             if (blocks[blocks.Count - 1].locked)
             {
-                //if (gridCells[lastBlock.gridX, lastBlock.gridY].isFilled && blockMatrix[lastBlock.gridY, lastBlock.gridX] != lastBlock)
-                //{
-                //    Block tempBlock = lastBlock;
-                //    tempBlock.gameObject.transform.position = new Vector3(-100, -100, 0);
-                //    blockSpawner.hasBlock = false;
-                //    lastBlock = blockSpawner.SpawnBlock();
-                //    blocks.Add(lastBlock);
-                //    DestroyImmediate(tempBlock);
-                //    print("Reset block");
-                //    return;
-                //}
                 if (AddBlock(lastBlock))
                 {
                     blockSpawner.hasBlock = false;
-                   // AddBlock(lastBlock);
                     lastBlock = blockSpawner.SpawnBlock();
                     blocks.Add(lastBlock);
                 }

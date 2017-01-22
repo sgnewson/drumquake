@@ -29,7 +29,7 @@ public class WaveManager : MonoBehaviour {
 	public GameObject WavePrefabLocal;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
-	public MoveCamera MainCamera;
+	public Camera MainCamera;
 
 	public Material redCircle;
 	public Material blueCircle;
@@ -129,7 +129,7 @@ public class WaveManager : MonoBehaviour {
 
 	void EarthquakeCountdown() {
 		if (EarthquakeTimerCount <= 0) {
-			MainCamera.Shake (WaveScore / 1000);
+			MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000);
 			EarthquakeTimerCount = earthquakeTimerStartCount;
 		} else {
 			EarthquakeTimerCount--;
