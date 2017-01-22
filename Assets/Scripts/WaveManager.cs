@@ -11,7 +11,7 @@ public class WaveManager : MonoBehaviour {
 	const float waveStartRadius = 1f;
 	const float waveShrinkRate = 0.5f;
 	const int EarthquakeTimerStartCount = 60;
-	const int CutSceneTimerCount = 20;
+	const int CutSceneTimerCount = 10;
 
 	public float HeartBeatInMilliseconds = 300f;
 	int beatCount;
@@ -149,6 +149,7 @@ public class WaveManager : MonoBehaviour {
         if (EarthquakeTimerCount <= 0)
         {
             MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000);
+			WaveScore = 0;
             EarthquakeTimerCount = EarthquakeTimerStartCount + CutSceneTimerCount;
             GameManager.PlayOn = false;
             EarthquakeTimerUI.text = "Earthquake!!!!";
