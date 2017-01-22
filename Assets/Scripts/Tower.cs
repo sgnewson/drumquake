@@ -25,10 +25,10 @@ public class Tower : MonoBehaviour
     {
         gridCells = new TowerGridSlot[gridHeight, gridWidth];
 
-        var buildDelta = new Vector3(0, 0, 0);
+		var buildDelta = new Vector3(0f, 0f, 0f);
         for (var y = 2; y < gridHeight - 2; y++)
         {
-            buildDelta.x = 0;
+			buildDelta.x = -3.5f;
             for (var x = 2; x < gridWidth-2; x++)
             {
                 var newCell = Instantiate(towerGridSlot, buildDelta, Quaternion.identity);

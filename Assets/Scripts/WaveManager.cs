@@ -112,7 +112,7 @@ public class WaveManager : MonoBehaviour {
 			beatCount = 1;
 		}
 
-		Debug.Log ("Beat count: " + beatCount);
+		//Debug.Log ("Beat count: " + beatCount);
 
 		if (CurrentPattern.Dict.ContainsKey (beatCount) == true) {
 			SpawnWave (CurrentPattern.Dict [beatCount]);
@@ -189,9 +189,9 @@ public class WaveManager : MonoBehaviour {
 		}
 
 		Wave wave = WaveList [0];
-//		Debug.Log ("percentage: " + wave.Percentage);
+		Debug.Log ("percentage: " + wave.Percentage);
 
-		float delta = Mathf.Abs (0.2f - wave.Percentage);
+		float delta = Mathf.Abs (0.24f - wave.Percentage);
 
 		if (wave.Button != buttonPressed) {
 			WaveIncorrect (buttonPressed);
