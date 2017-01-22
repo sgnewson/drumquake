@@ -12,6 +12,8 @@ public class TowerBlock : MonoBehaviour
     public int gridY { get; set; }
     public int type { get; set; }
 
+    public Tower tower;
+
     public GroupEntity blockGroup { get; set; }
 
 	// Use this for initialization
@@ -23,6 +25,10 @@ public class TowerBlock : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-		
+		if (this.transform.position.y < -1)
+        {
+            tower.glueBlockMatrix[gridY, gridX] = null;
+            Destroy(this);
+        }
 	}
 }
