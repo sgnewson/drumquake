@@ -3,6 +3,7 @@
 public class TowerGridSlot : MonoBehaviour {
 
     public bool isSelected = false;
+    public bool isFilled = false;
     
     public Tower tower;
 
@@ -28,6 +29,14 @@ public class TowerGridSlot : MonoBehaviour {
     private void OnMouseExit()
     {
         isSelected = false;
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.collider.bounds.min == gameObject.transform.position || collision.collider.bounds.max == gameObject.transform.position)
+        {
+            print("In grid.");
+        }
     }
 
     private void OnMouseUp()

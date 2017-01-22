@@ -10,6 +10,7 @@ public class Tower : MonoBehaviour
     public TowerGridSlot[,] gridCells;
     public Block[,] blockMatrix;
     public List<Block> blocks;
+    private Block lastBlock;
 
     public int gridHeight = 5;
     public int gridWidth = 5;
@@ -43,6 +44,11 @@ public class Tower : MonoBehaviour
         var x = block.gridX;
         var y = block.gridY;
 
+        if (gridCells[x, y].isFilled)
+        {
+            return false;
+        }
+
         if(x < 0 || x >= gridWidth)
         {
             return false;
@@ -54,6 +60,7 @@ public class Tower : MonoBehaviour
         }
 
         this.blockMatrix[y, x] = block;
+        gridCells[x, y].isFilled = true;
         return true;
     }
 
@@ -65,8 +72,8 @@ public class Tower : MonoBehaviour
         BuildGridCells();
 
         blockSpawner = Instantiate(blockSpawner, new Vector3(5, 5), Quaternion.identity);
-
-        blocks.Add(blockSpawner.SpawnBlock());
+        lastBlock = blockSpawner.SpawnBlock();
+        blocks.Add(lastBlock);
     }
 
     // Update is called once per frame
@@ -76,8 +83,32 @@ public class Tower : MonoBehaviour
         {
             if (blocks[blocks.Count - 1].locked)
             {
-                blockSpawner.hasBlock = false;
-                blocks.Add(blockSpawner.SpawnBlock());
+                //if (gridCells[lastBlock.gridX, lastBlock.gridY].isFilled && blockMatrix[lastBlock.gridY, lastBlock.gridX] != lastBlock)
+                //{
+                //    Block tempBlock = lastBlock;
+                //    tempBlock.gameObject.transform.position = new Vector3(-100, -100, 0);
+                //    blockSpawner.hasBlock = false;
+                //    lastBlock = blockSpawner.SpawnBlock();
+                //    blocks.Add(lastBlock);
+                //    DestroyImmediate(tempBlock);
+                //    print("Reset block");
+                //    return;
+                //}
+                if (AddBlock(lastBlock))
+                {
+                    blockSpawner.hasBlock = false;
+                   // AddBlock(lastBlock);
+                    lastBlock = blockSpawner.SpawnBlock();
+                    blocks.Add(lastBlock);
+                }
+                else
+                {
+                    Block tempBlock = lastBlock;
+                    blockSpawner.hasBlock = false;
+                    lastBlock = blockSpawner.SpawnBlock();
+                    blocks.Add(lastBlock);
+                    DestroyImmediate(tempBlock);
+                }
             }
         }
     }

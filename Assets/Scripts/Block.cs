@@ -17,6 +17,14 @@ public class Block : MonoBehaviour
     public int gridX { get; set; }
     public int gridY { get; set; }
 
+    private void Start()
+    {
+        locked = false;
+        isColliding = false;
+        ResetCanMove();
+        collapsed = false;
+    }
+
     void OnMouseDown()
     {
         gameObject.GetComponent<Rigidbody>().detectCollisions = false;
@@ -67,10 +75,7 @@ public class Block : MonoBehaviour
                     }
                     else
                     {
-                        for (int iii = 0; iii < canMove.Length; iii++)
-                        {
-                            canMove[iii] = true;
-                        }
+                        ResetCanMove();
                     }
                 }
 
@@ -105,10 +110,7 @@ public class Block : MonoBehaviour
 
                 if (IsCornerCollision())
                 {
-                    for (int kkk = 0; kkk < canMove.Length; kkk++)
-                    {
-                        canMove[kkk] = true;
-                    }
+                    ResetCanMove();
                 }
             }
         }
@@ -140,6 +142,9 @@ public class Block : MonoBehaviour
             if (!locked && !IsCornerCollision())
             {
                 locked = true;
+                GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+                gridX = (int)Mathf.Round(transform.position.x);
+                gridY = (int)Mathf.Round(transform.position.y);
             }
         }
     }
@@ -147,15 +152,14 @@ public class Block : MonoBehaviour
     private void OnCollisionExit(Collision collision)
     {
         isColliding = false;
+        ResetCanMove();
+    }
 
+    private void ResetCanMove()
+    {
         for (int iii = 0; iii < canMove.Length; iii++)
         {
             canMove[iii] = true;
         }
-    }
-
-    private void Start()
-    {
-        locked = false;
     }
 }
