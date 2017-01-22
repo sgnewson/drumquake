@@ -131,7 +131,7 @@ public class WaveManager : MonoBehaviour {
 		} else {
 			EarthquakeTimerCount--;
 		}
-		EarthquakeTimerUI.text = "Time to quake: " + EarthquakeTimerCount;
+		EarthquakeTimerUI.text = "Countdown: " + EarthquakeTimerCount;
 	}
 
 	void Update() {
@@ -153,7 +153,7 @@ public class WaveManager : MonoBehaviour {
 		WaveList = WavesToKeep;
 		WaveScore = Mathf.Max(0, WaveScore);
 
-		WaveScoreUI.text = "Wave Score: " + WaveScore;
+		WaveScoreUI.text = "Magnitude: " + WaveScore/100;
 	}
 
 	public void HandleDrumPress(XboxButton buttonPressed) {
