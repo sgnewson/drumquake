@@ -119,7 +119,6 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	void SpawnWave(XboxButton waveType) {
-
 		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefabLocal, ReferenceWave.transform.position, Quaternion.identity);
 		newWaveGameObject.SetActive (true);
 
@@ -211,6 +210,8 @@ public class WaveManager : MonoBehaviour {
 		
 	private void  WaveHit (XboxButton buttonPressed)
 	{
+		GameManager.LastHitType = buttonPressed;
+
 		audioSource.clip = ColorMap[buttonPressed].thisClip;
 		audioSource.volume = ColorMap[buttonPressed].Volume * HitVolumeMultiplier;
 		audioSource.pitch = basePitch * HitPitchMultiplier;
@@ -225,6 +226,8 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveClose (XboxButton buttonPressed)
 	{
+		GameManager.LastHitType = buttonPressed;
+
 		audioSource.clip = ColorMap[buttonPressed].thisClip;
 		audioSource.volume = ColorMap[buttonPressed].Volume * CloseVolumeMultiplier;
 		audioSource.pitch = basePitch * ClosePitchMultiplier;

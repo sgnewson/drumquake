@@ -1,16 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XboxCtrlrInput;
 
 public class Spawner : MonoBehaviour
 {
     public bool hasBlock = false;
-    public Block towerBlock;
+    public Block[] towerBlock;
     public int currentSelectedBlockType { get; set; }
 	public Tower Tower;
+	private Dictionary<XboxButton, int> dict;
 
     private void Start()
     {
+		dict = new Dictionary<XboxButton, int>();
+		dict.Add (XboxButton.A, 0);
+		dict.Add (XboxButton.X, 1);
+		dict.Add (XboxButton.Y, 2);
+		dict.Add (XboxButton.B, 3);
+
         currentSelectedBlockType = 0;
     }
 
@@ -42,7 +50,8 @@ public class Spawner : MonoBehaviour
     {
         if (!hasBlock)
         {
-            var newCube = Instantiate(towerBlock, transform.position, Quaternion.identity);
+			int towerBlockIndex = dict[GameManager.LastHitType];
+			var newCube = Instantiate(towerBlock[towerBlockIndex], transform.position, Quaternion.identity);
 			newCube.gameObject.name = "Block " + Tower.blocks.Count;
 
             Material material = new Material(Shader.Find("Standard"));
@@ -75,9 +84,9 @@ public class Spawner : MonoBehaviour
             newCube.gameObject.SetActive(true);
 
             newCube.gameObject.SetActive(true);
-            towerBlock = newCube;
+            towerBlock[towerBlockIndex] = newCube;
             hasBlock = true;
-            return towerBlock;
+			return towerBlock[towerBlockIndex];
         }
         else
         {
