@@ -23,6 +23,9 @@ public class WaveManager : MonoBehaviour {
 	public Text WaveScoreUI;
 	public Text HitResultUI;
 
+	public Light FeedbackLight;
+	float initialFeedbackLightIntensity;
+
 	public GameObject WavePrefabLocal;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
@@ -85,10 +88,12 @@ public class WaveManager : MonoBehaviour {
 
 		InvokeRepeating ("EarthquakeCountdown", 0f, 1f);
 		beatCount = 0;
+
+		initialFeedbackLightIntensity = FeedbackLight.intensity;
 	}
 
 	void Heartbeat() {
-		beatCount++;
+		beatCount = (beatCount + 1) % 33;
 
 		Debug.Log ("Beat count: " + beatCount);
 
@@ -177,6 +182,8 @@ public class WaveManager : MonoBehaviour {
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
 		WaveScore += 10;
 
+		IntensifyLight (2f);
+
 		DisplayHitResult (resultText);
 	}
 
@@ -190,6 +197,8 @@ public class WaveManager : MonoBehaviour {
 		string resultText = "CLOSE :| " + buttonPressed;
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
 		WaveScore += 2;
+
+		IntensifyLight (1.3f);
 
 		DisplayHitResult (resultText);
 	}
@@ -247,6 +256,16 @@ public class WaveManager : MonoBehaviour {
 		EasyPattern.Dict.Add (32, XboxButton.A);
 
 		CurrentPattern = EasyPattern;
+	}
+
+	void IntensifyLight(float multiplier) {
+		FeedbackLight.intensity *= multiplier;
+		StartCoroutine ("resetLightIntensity");
+	}
+
+	IEnumerator resetLightIntensity() {
+		yield return new WaitForSeconds (0.2f);
+		FeedbackLight.intensity = initialFeedbackLightIntensity;
 	}
 
 	public class AudioStuff {
