@@ -141,6 +141,11 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	public void HandleDrumPress(XboxButton buttonPressed) {
+		if (WaveList.Count == 0) {
+			WaveMiss (buttonPressed);
+			return;
+		}
+
 		Wave wave = WaveList [0];
 //		Debug.Log ("percentage: " + wave.Percentage);
 
@@ -159,7 +164,6 @@ public class WaveManager : MonoBehaviour {
 			WaveMiss (buttonPressed);
 		}
 		wave.AttemptedHit = true;
-			
 	}
 
 	private void  WaveHit (XboxButton buttonPressed)
