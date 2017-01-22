@@ -6,10 +6,12 @@ public class TowerGridSlot : MonoBehaviour {
     public bool isFilled = false;
     
     public Tower tower;
+    public TowerBlock towerBlock;
 
     public int gridX { get; set; }
     public int gridY { get; set; }
 
+    private bool mouseDownHere = false;
 
     // Use this for initialization
     void Start () {
@@ -39,11 +41,35 @@ public class TowerGridSlot : MonoBehaviour {
         }
     }
 
+    private void OnMouseDown()
+    {
+        mouseDownHere = true;
+    }
+
     private void OnMouseUp()
     {
-        //var newCube = Instantiate(towerBlock, this.transform.position, Quaternion.identity);
-        //newCube.gameObject.SetActive(true);
-        
-        //tower.blocks.Add(newCube);
+        if(!mouseDownHere)
+        {
+            return;
+        }
+
+        var newCube = Instantiate(towerBlock, this.transform.position, Quaternion.identity);
+        Material material = new Material(Shader.Find("Standard"));
+        material.color = tower.currentSelectedBlockType == 0
+            ? Color.red
+            : tower.currentSelectedBlockType == 1
+                ? Color.green
+                : Color.blue;
+        newCube.GetComponent<Renderer>().material = material;
+
+        newCube.gridX = this.gridX;
+        newCube.gridY = this.gridY;
+        newCube.type = tower.currentSelectedBlockType;
+
+        newCube.gameObject.SetActive(true);
+
+        this.tower.glueBlockMatrix[this.gridY, this.gridX] = newCube;
+
+        tower.AddGlues(newCube);
     }
 }
