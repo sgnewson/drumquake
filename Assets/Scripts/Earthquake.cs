@@ -15,6 +15,8 @@ public class Earthquake : MonoBehaviour
 	Vector3 intialBasePos;
 	float elapsedShakeTime;
 
+	private float shakeMultiplier;
+
     public float speed = 0.1f;
 
 	public void EarthquakeMeDaddy(float magnitude) {
@@ -28,6 +30,11 @@ public class Earthquake : MonoBehaviour
 		}
 
 		Shake(magnitude);
+	}
+
+	void Start() {
+		originPosition = transform.position;
+		originRotation = transform.rotation;
 	}
 
     void Update()
@@ -46,27 +53,30 @@ public class Earthquake : MonoBehaviour
 
     void UpdateCameraShake()
     {
-        if (shake_intensity > 0)
-        {
-            gameObject.transform.position = originPosition + Random.insideUnitSphere * shake_intensity;
-            gameObject.transform.rotation = new Quaternion(originRotation.x + Random.Range(-shake_intensity, shake_intensity) * .2f, originRotation.y + Random.Range(-shake_intensity, shake_intensity) * .2f, originRotation.z + Random.Range(-shake_intensity, shake_intensity) * .2f, originRotation.w + Random.Range(-shake_intensity, shake_intensity) * .2f);
-            shake_intensity -= shake_decay;
-        }
+		if (shake_intensity > 0) {
+			gameObject.transform.position = originPosition + Random.insideUnitSphere * shake_intensity * .5f;
+			gameObject.transform.rotation = new Quaternion (originRotation.x + Random.Range (-shake_intensity, shake_intensity) * .1f, originRotation.y + Random.Range (-shake_intensity, shake_intensity) * .2f, originRotation.z + Random.Range (-shake_intensity, shake_intensity) * .2f, originRotation.w + Random.Range (-shake_intensity, shake_intensity) * .2f);
+			shake_intensity -= shake_decay;
+		} else {
+			transform.position = originPosition;
+			transform.rotation = originRotation;
+		}
     }
 
     public void Shake(float shakeIntensity)
     {
+		shakeMultiplier = shakeIntensity * 10 + 0.1f;
         Debug.Log("Quake Magnitude: " + shakeIntensity);
-        originPosition = transform.position;
+		originPosition = transform.position;
+		originRotation = transform.rotation;
 
 		intialBasePos = BasePlate.transform.position;
 
 		elapsedShakeTime = 0f;
 		baseShakeCount = 0;
-		Invoke ("StopShakeBase", 10f);
+		Invoke ("StopShakeBase", WaveManager.CutSceneTimerCount);
 		InvokeRepeating ("ShakeBase", 0f, 0.2f);
 
-        originRotation = transform.rotation;
         shake_intensity = shakeIntensity;
         shake_decay = 0.002f;
     }
@@ -76,9 +86,9 @@ public class Earthquake : MonoBehaviour
 
 		if (baseShakeCount % 2 == 0) {
 			// powerful
-			float xOffset = Random.Range (-0.2f, 0.2f);
+			float xOffset = Random.Range (-0.2f*shakeMultiplier, 0.2f*shakeMultiplier);
 			float yOffset = Random.Range (-0.1f, 0.1f);
-			float zOffset = Random.Range (-0.2f, 0.2f);
+			float zOffset = Random.Range (-0.2f*shakeMultiplier, 0.2f*shakeMultiplier);
 
 			BasePlate.transform.position = new Vector3 (BasePlate.transform.position.x + xOffset, BasePlate.transform.position.y + yOffset, BasePlate.transform.position.z + zOffset);
 

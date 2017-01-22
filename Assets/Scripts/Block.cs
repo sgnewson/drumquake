@@ -74,7 +74,7 @@ public class Block : MonoBehaviour
                 Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
 
                 Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
-				Debug.Log ("curPosition y: " + curPosition.y);
+//				Debug.Log ("curPosition y: " + curPosition.y);
 
 				if (curPosition.y < 0) {
 					return;

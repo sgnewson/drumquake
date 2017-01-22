@@ -10,8 +10,8 @@ public class WaveManager : MonoBehaviour {
 	const float waveSpawnDelay = 0.5f;
 	const float waveStartRadius = 1f;
 	const float waveShrinkRate = 0.5f;
-	const int EarthquakeTimerStartCount = 10;
-	const int CutSceneTimerCount = 10;
+	const int EarthquakeTimerStartCount = 60;
+	public const int CutSceneTimerCount = 20;
 
 	public Tower tower;
 
@@ -148,8 +148,8 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	void StartEarthquake() {
-		//MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000f);
-		MainCamera.GetComponent<Earthquake>().EarthquakeMeDaddy(0.03f);
+		MainCamera.GetComponent<Earthquake>().EarthquakeMeDaddy(WaveScore / 1000f);
+//		MainCamera.GetComponent<Earthquake>().EarthquakeMeDaddy(0.03f);
 		WaveScore = 0;
 		EarthquakeTimerCount = EarthquakeTimerStartCount + CutSceneTimerCount;
 		EarthquakeTimerUI.text = "Earthquake!!!!";
@@ -184,7 +184,7 @@ public class WaveManager : MonoBehaviour {
 		}
 
 		Wave wave = WaveList [0];
-		Debug.Log ("percentage: " + wave.Percentage);
+//		Debug.Log ("percentage: " + wave.Percentage);
 
 		float delta = Mathf.Abs (0.24f - wave.Percentage);
 
