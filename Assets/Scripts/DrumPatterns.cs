@@ -15,7 +15,7 @@ public class DrumPatterns {
 	public static DrumPattern GetCurrentPattern(int score) {
 		// use the score to determine the correct pattern and return it
 		if (score < 150) {
-			return Pattern5;
+			return Pattern1;
 		} else if (score < 300) {
 			return Pattern2;
 		} else if (score < 450) {

@@ -14,14 +14,15 @@ public class Earthquake : MonoBehaviour
 	int baseShakeCount;
 	Vector3 intialBasePos;
 	float elapsedShakeTime;
-
+    
 	private float shakeMultiplier;
 
     public float speed = 0.1f;
 
 	SoundEffectManager soundEffectManager;
+    public Canvas InGameMenu;
 
-	void Awake() {
+    void Awake() {
 		soundEffectManager = GameObject.Find ("SoundEffectManager").GetComponent<SoundEffectManager> ();
 	}
 
@@ -62,8 +63,13 @@ public class Earthquake : MonoBehaviour
     void UpdateCameraShake()
     {
 		if (shake_intensity > 0) {
-			gameObject.transform.position = originPosition + Random.insideUnitSphere * shake_intensity * .5f;
-			gameObject.transform.rotation = new Quaternion (originRotation.x + Random.Range (-shake_intensity, shake_intensity) * .1f, originRotation.y + Random.Range (-shake_intensity, shake_intensity) * .2f, originRotation.z + Random.Range (-shake_intensity, shake_intensity) * .2f, originRotation.w + Random.Range (-shake_intensity, shake_intensity) * .2f);
+			var cameraShake = shake_intensity + .05f;
+			gameObject.transform.position = originPosition + Random.insideUnitSphere * cameraShake * .5f;
+			gameObject.transform.rotation = new Quaternion (
+				originRotation.x + Random.Range (-cameraShake, cameraShake) * .1f, 
+				originRotation.y + Random.Range (-cameraShake, cameraShake) * .2f, 
+				originRotation.z + Random.Range (-cameraShake, cameraShake) * .2f, 
+				originRotation.w + Random.Range (-cameraShake, cameraShake) * .2f);
 			shake_intensity -= shake_decay;
 		} else {
 			transform.position = originPosition;
@@ -123,5 +129,6 @@ public class Earthquake : MonoBehaviour
 //		}
 
 		CancelInvoke ("ShakeBase");
-	}
+        InGameMenu.GetComponent<InGameMenuController>().OpenMenu();
+    }
 }
