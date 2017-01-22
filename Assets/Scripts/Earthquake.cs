@@ -129,6 +129,6 @@ public class Earthquake : MonoBehaviour
 //		}
 
 		CancelInvoke ("ShakeBase");
-        //InGameMenu.GetComponent<InGameMenuController>().OpenMenu();
+        InGameMenu.GetComponent<InGameMenuController>().OpenMenu();
     }
 }
