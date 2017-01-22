@@ -21,6 +21,28 @@ public class Tower : MonoBehaviour
 
     public int currentSelectedBlockType { get; set; }
 
+    private void BuildGridCells()
+    {
+        gridCells = new TowerGridSlot[gridHeight, gridWidth];
+
+        var buildDelta = new Vector3(0, 0, 0);
+        for (var y = 2; y < gridHeight - 2; y++)
+        {
+            buildDelta.x = 0;
+            for (var x = 2; x < gridWidth - 2; x++)
+            {
+                var newCell = Instantiate(towerGridSlot, buildDelta, Quaternion.identity);
+                newCell.gameObject.SetActive(true);
+                buildDelta.x++;
+
+                newCell.gridX = x;
+                newCell.gridY = y;
+                gridCells[y, x] = newCell;
+            }
+            buildDelta.y++;
+        }
+    }
+
  	// Use this for initialization
 	void Start ()
     {
@@ -86,27 +108,6 @@ public class Tower : MonoBehaviour
         }
     }
 
-    private void BuildGridCells()
-    {
-        gridCells = new TowerGridSlot[gridHeight, gridWidth];
-
-        var buildDelta = new Vector3(0, 0, 0);
-        for (var y = 2; y < gridHeight - 2; y++)
-        {
-            buildDelta.x = 0;
-            for (var x = 2; x < gridWidth - 2; x++)
-            {
-                var newCell = Instantiate(towerGridSlot, buildDelta, Quaternion.identity);
-                newCell.gameObject.SetActive(true);
-                buildDelta.x++;
-
-                newCell.gridX = x;
-                newCell.gridY = y;
-                gridCells[y, x] = newCell;
-            }
-            buildDelta.y++;
-        }
-    }
 
     public bool AddBlock(Block block)
     {

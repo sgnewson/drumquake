@@ -11,7 +11,7 @@ public class WaveManager : MonoBehaviour {
 	const float waveStartRadius = 1f;
 	const float waveShrinkRate = 0.5f;
 	const int EarthquakeTimerStartCount = 60;
-	const int CutSceneTimerCount = 20;
+	const int CutSceneTimerCount = 10;
 
 	public float HeartBeatInMilliseconds = 300f;
 	int beatCount;
@@ -51,14 +51,14 @@ public class WaveManager : MonoBehaviour {
 
 	Dictionary<XboxButton, AudioStuff> clipForButton;
 
-	[Range (0f, 1f)] public float MissPitchMultiplier;
-	[Range (0f, 1f)] public float MissVolumeMultiplier;
+	float MissPitchMultiplier = 0.604f;
+	float MissVolumeMultiplier = 0.662f;
 
-	[Range (0f, 1f)] public float ClosePitchMultiplier;
-	[Range (0f, 1f)] public float CloseVolumeMultiplier;
+	float ClosePitchMultiplier = 0.738f;
+	float CloseVolumeMultiplier = 0.8f;
 
-	[Range (0f, 1f)] public float HitPitchMultiplier;
-	[Range (0f, 1f)] public float HitVolumeMultiplier;
+	float HitPitchMultiplier = 1f;
+	float HitVolumeMultiplier = 1f;
 
 	public AudioClip RedSound;
 	public AudioClip YellowSound;
@@ -112,7 +112,7 @@ public class WaveManager : MonoBehaviour {
 			beatCount = 1;
 		}
 
-		Debug.Log ("Beat count: " + beatCount);
+		//Debug.Log ("Beat count: " + beatCount);
 
 		if (CurrentPattern.Dict.ContainsKey (beatCount) == true) {
 			SpawnWave (CurrentPattern.Dict [beatCount]);
@@ -149,6 +149,7 @@ public class WaveManager : MonoBehaviour {
         if (EarthquakeTimerCount <= 0)
         {
             MainCamera.GetComponent<Earthquake>().Shake(WaveScore / 1000);
+			WaveScore = 0;
             EarthquakeTimerCount = EarthquakeTimerStartCount + CutSceneTimerCount;
             GameManager.PlayOn = false;
             EarthquakeTimerUI.text = "Earthquake!!!!";
@@ -189,9 +190,9 @@ public class WaveManager : MonoBehaviour {
 		}
 
 		Wave wave = WaveList [0];
-//		Debug.Log ("percentage: " + wave.Percentage);
+		Debug.Log ("percentage: " + wave.Percentage);
 
-		float delta = Mathf.Abs (0.2f - wave.Percentage);
+		float delta = Mathf.Abs (0.24f - wave.Percentage);
 
 		if (wave.Button != buttonPressed) {
 			WaveIncorrect (buttonPressed);
@@ -282,7 +283,6 @@ public class WaveManager : MonoBehaviour {
 		MediumPattern.Dict.Add (4, XboxButton.A);
 		MediumPattern.Dict.Add (6, XboxButton.X);
 		MediumPattern.Dict.Add (8, XboxButton.A);
-		MediumPattern.Dict.Add (9, XboxButton.X);
 		MediumPattern.Dict.Add (10, XboxButton.A);
 		MediumPattern.Dict.Add (12, XboxButton.A);
 		MediumPattern.Dict.Add (14, XboxButton.X);
@@ -291,25 +291,22 @@ public class WaveManager : MonoBehaviour {
 		MediumHardPattern = new DrumPattern ();
 		MediumHardPattern.Dict.Add (2, XboxButton.A);
 		MediumHardPattern.Dict.Add (4, XboxButton.A);
-		MediumHardPattern.Dict.Add (5, XboxButton.Y);
 		MediumHardPattern.Dict.Add (6, XboxButton.X);
-		MediumHardPattern.Dict.Add (8, XboxButton.A);
+		MediumHardPattern.Dict.Add (8, XboxButton.Y);
 		MediumHardPattern.Dict.Add (10, XboxButton.A);
-		MediumHardPattern.Dict.Add (12, XboxButton.X);
-		MediumHardPattern.Dict.Add (14, XboxButton.A);
+		MediumHardPattern.Dict.Add (12, XboxButton.A);
+		MediumHardPattern.Dict.Add (14, XboxButton.X);
+		MediumHardPattern.Dict.Add (16, XboxButton.Y);
 
 		HardPattern = new DrumPattern ();
-		HardPattern.Dict.Add (2, XboxButton.A);
-		HardPattern.Dict.Add (4, XboxButton.A);
-		HardPattern.Dict.Add (5, XboxButton.Y);
-		HardPattern.Dict.Add (6, XboxButton.X);
-		HardPattern.Dict.Add (8, XboxButton.A);
-		HardPattern.Dict.Add (9, XboxButton.X);
-		HardPattern.Dict.Add (10, XboxButton.A);
-		HardPattern.Dict.Add (11, XboxButton.Y);
-		HardPattern.Dict.Add (12, XboxButton.X);
-		HardPattern.Dict.Add (13, XboxButton.Y);
-		HardPattern.Dict.Add (14, XboxButton.A);
+		MediumHardPattern.Dict.Add (2, XboxButton.A);
+		MediumHardPattern.Dict.Add (4, XboxButton.A);
+		MediumHardPattern.Dict.Add (6, XboxButton.X);
+		MediumHardPattern.Dict.Add (7, XboxButton.Y);
+		MediumHardPattern.Dict.Add (10, XboxButton.A);
+		MediumHardPattern.Dict.Add (12, XboxButton.A);
+		MediumHardPattern.Dict.Add (14, XboxButton.X);
+		MediumHardPattern.Dict.Add (15, XboxButton.Y);
 
 		CurrentPattern = EasyPattern;
 	}
