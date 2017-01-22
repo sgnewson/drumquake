@@ -14,14 +14,15 @@ public class Earthquake : MonoBehaviour
 	int baseShakeCount;
 	Vector3 intialBasePos;
 	float elapsedShakeTime;
-
+    
 	private float shakeMultiplier;
 
     public float speed = 0.1f;
 
 	SoundEffectManager soundEffectManager;
+    public Canvas InGameMenu;
 
-	void Awake() {
+    void Awake() {
 		soundEffectManager = GameObject.Find ("SoundEffectManager").GetComponent<SoundEffectManager> ();
 	}
 
@@ -128,5 +129,6 @@ public class Earthquake : MonoBehaviour
 //		}
 
 		CancelInvoke ("ShakeBase");
-	}
+        //InGameMenu.GetComponent<InGameMenuController>().OpenMenu();
+    }
 }
