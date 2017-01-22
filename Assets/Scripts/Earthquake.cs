@@ -19,8 +19,15 @@ public class Earthquake : MonoBehaviour
 
     public float speed = 0.1f;
 
+	SoundEffectManager soundEffectManager;
+
+	void Awake() {
+		soundEffectManager = GameObject.Find ("SoundEffectManager").GetComponent<SoundEffectManager> ();
+	}
+
 	public void EarthquakeMeDaddy(float magnitude) {
 		Debug.Log ("Quaking========");
+		soundEffectManager.PlayEarthquakeSound ();
 		foreach (Block block in tower.glueBlockMatrix)
 		{
 			if (block != null)

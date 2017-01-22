@@ -30,8 +30,11 @@ public class Block : MonoBehaviour
 
     public GroupEntity blockGroup { get; set; }
 
+	SoundEffectManager soundEffectManager;
+
     private void Start()
     {
+		soundEffectManager = GameObject.Find ("SoundEffectManager").GetComponent<SoundEffectManager> ();
 		fellOffBase = false;
         locked = false;
         isColliding = false;
@@ -57,6 +60,7 @@ public class Block : MonoBehaviour
         gameObject.GetComponent<Rigidbody>().detectCollisions = false;
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
         offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+		soundEffectManager.PlayPickupBlockSound ();
     }
 
     private void OnMouseUp()
@@ -183,6 +187,7 @@ public class Block : MonoBehaviour
 
 			if (!locked && !cornerTest)
             {
+				soundEffectManager.PlayPlaceBlockSound ();
                 locked = true;
                 GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
                 gridX = (int)Mathf.Round(transform.position.x + 2);
@@ -194,6 +199,7 @@ public class Block : MonoBehaviour
 	private void OnCollisionEnter(Collision collision) {
 		if (collision.collider.name == "Terrain") {
 			Debug.Log ("Kill block: " + this.gameObject.name);
+			soundEffectManager.PlayTowerFallSound ();
 			fellOffBase = true;
 		}
 	}
