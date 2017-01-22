@@ -283,7 +283,6 @@ public class WaveManager : MonoBehaviour {
 		MediumPattern.Dict.Add (4, XboxButton.A);
 		MediumPattern.Dict.Add (6, XboxButton.X);
 		MediumPattern.Dict.Add (8, XboxButton.A);
-		MediumPattern.Dict.Add (9, XboxButton.X);
 		MediumPattern.Dict.Add (10, XboxButton.A);
 		MediumPattern.Dict.Add (12, XboxButton.A);
 		MediumPattern.Dict.Add (14, XboxButton.X);
@@ -292,25 +291,22 @@ public class WaveManager : MonoBehaviour {
 		MediumHardPattern = new DrumPattern ();
 		MediumHardPattern.Dict.Add (2, XboxButton.A);
 		MediumHardPattern.Dict.Add (4, XboxButton.A);
-		MediumHardPattern.Dict.Add (5, XboxButton.Y);
 		MediumHardPattern.Dict.Add (6, XboxButton.X);
-		MediumHardPattern.Dict.Add (8, XboxButton.A);
+		MediumHardPattern.Dict.Add (8, XboxButton.Y);
 		MediumHardPattern.Dict.Add (10, XboxButton.A);
-		MediumHardPattern.Dict.Add (12, XboxButton.X);
-		MediumHardPattern.Dict.Add (14, XboxButton.A);
+		MediumHardPattern.Dict.Add (12, XboxButton.A);
+		MediumHardPattern.Dict.Add (14, XboxButton.X);
+		MediumHardPattern.Dict.Add (16, XboxButton.Y);
 
 		HardPattern = new DrumPattern ();
-		HardPattern.Dict.Add (2, XboxButton.A);
-		HardPattern.Dict.Add (4, XboxButton.A);
-		HardPattern.Dict.Add (5, XboxButton.Y);
-		HardPattern.Dict.Add (6, XboxButton.X);
-		HardPattern.Dict.Add (8, XboxButton.A);
-		HardPattern.Dict.Add (9, XboxButton.X);
-		HardPattern.Dict.Add (10, XboxButton.A);
-		HardPattern.Dict.Add (11, XboxButton.Y);
-		HardPattern.Dict.Add (12, XboxButton.X);
-		HardPattern.Dict.Add (13, XboxButton.Y);
-		HardPattern.Dict.Add (14, XboxButton.A);
+		MediumHardPattern.Dict.Add (2, XboxButton.A);
+		MediumHardPattern.Dict.Add (4, XboxButton.A);
+		MediumHardPattern.Dict.Add (6, XboxButton.X);
+		MediumHardPattern.Dict.Add (7, XboxButton.Y);
+		MediumHardPattern.Dict.Add (10, XboxButton.A);
+		MediumHardPattern.Dict.Add (12, XboxButton.A);
+		MediumHardPattern.Dict.Add (14, XboxButton.X);
+		MediumHardPattern.Dict.Add (15, XboxButton.Y);
 
 		CurrentPattern = EasyPattern;
 	}
