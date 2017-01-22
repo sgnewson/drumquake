@@ -19,7 +19,9 @@ public class Earthquake : MonoBehaviour
 
     public float speed = 0.1f;
 
-	public void EarthquakeMeDaddy(float magnitude) {
+    public Canvas InGameMenu;
+
+    public void EarthquakeMeDaddy(float magnitude) {
 		Debug.Log ("Quaking========");
 		foreach (Block block in tower.glueBlockMatrix)
 		{
@@ -116,5 +118,8 @@ public class Earthquake : MonoBehaviour
 //		}
 
 		CancelInvoke ("ShakeBase");
+
+        InGameMenu.GetComponent<InGameMenuController>().OpenMenu() ;
+
 	}
 }
