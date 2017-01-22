@@ -39,6 +39,9 @@ public class WaveManager : MonoBehaviour {
 	Dictionary<XboxButton, AudioStuff> ColorMap;
 
 	public DrumPattern EasyPattern;
+	public DrumPattern MediumPattern;
+	public DrumPattern HardPattern;
+
 	DrumPattern CurrentPattern;
 
 	Dictionary<XboxButton, AudioStuff> clipForButton;
@@ -86,7 +89,7 @@ public class WaveManager : MonoBehaviour {
 		InvokeRepeating ("Heartbeat", 0f, HeartBeatInMilliseconds / 1000f);
 
 		InvokeRepeating ("EarthquakeCountdown", 0f, 1f);
-		beatCount = 0;
+		beatCount = 1;
 
 		initialFeedbackLightIntensity = FeedbackLight.intensity;
 	}
@@ -94,10 +97,10 @@ public class WaveManager : MonoBehaviour {
 	void Heartbeat() {
 		beatCount++;
 
-		if (beatCount >= 32) {
+		if (beatCount > 16) {
 			// Check score and set the next pattern appropriately
 			CurrentPattern = GetCurrentPattern();
-			beatCount = 0;
+			beatCount = 1;
 		}
 
 		Debug.Log ("Beat count: " + beatCount);
@@ -259,10 +262,38 @@ public class WaveManager : MonoBehaviour {
 
 	void SetupPatterns() {
 		EasyPattern = new DrumPattern ();
+		EasyPattern.Dict.Add (2, XboxButton.A);
+		EasyPattern.Dict.Add (4, XboxButton.A);
+		EasyPattern.Dict.Add (6, XboxButton.A);
 		EasyPattern.Dict.Add (8, XboxButton.A);
+		EasyPattern.Dict.Add (10, XboxButton.A);
+		EasyPattern.Dict.Add (12, XboxButton.A);
+		EasyPattern.Dict.Add (14, XboxButton.A);
 		EasyPattern.Dict.Add (16, XboxButton.A);
-		EasyPattern.Dict.Add (24, XboxButton.A);
-		EasyPattern.Dict.Add (32, XboxButton.A);
+
+		MediumPattern = new DrumPattern ();
+		MediumPattern.Dict.Add (2, XboxButton.A);
+		MediumPattern.Dict.Add (4, XboxButton.A);
+		MediumPattern.Dict.Add (6, XboxButton.X);
+		MediumPattern.Dict.Add (8, XboxButton.A);
+		MediumPattern.Dict.Add (9, XboxButton.X);
+		MediumPattern.Dict.Add (10, XboxButton.A);
+		MediumPattern.Dict.Add (12, XboxButton.A);
+		MediumPattern.Dict.Add (14, XboxButton.X);
+		MediumPattern.Dict.Add (16, XboxButton.A);
+
+		HardPattern = new DrumPattern ();
+		HardPattern.Dict.Add (2, XboxButton.A);
+		HardPattern.Dict.Add (4, XboxButton.A);
+		HardPattern.Dict.Add (5, XboxButton.Y);
+		HardPattern.Dict.Add (6, XboxButton.X);
+		HardPattern.Dict.Add (8, XboxButton.A);
+		HardPattern.Dict.Add (9, XboxButton.X);
+		HardPattern.Dict.Add (10, XboxButton.A);
+		HardPattern.Dict.Add (11, XboxButton.Y);
+		HardPattern.Dict.Add (12, XboxButton.X);
+		HardPattern.Dict.Add (13, XboxButton.Y);
+		HardPattern.Dict.Add (14, XboxButton.A);
 
 		CurrentPattern = EasyPattern;
 	}
