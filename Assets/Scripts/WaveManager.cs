@@ -17,12 +17,20 @@ public class WaveManager : MonoBehaviour {
 	int beatCount;
 
 	private float WaveScore = 0f;
+<<<<<<< Updated upstream
 	private int WaveCount = 0;
 	private int EarthquakeTimerCount = EarthquakeTimerStartCount;
+=======
+	private int EarthquakeTimerCount = earthquakeTimerStartCount;
+>>>>>>> Stashed changes
 
 	public Text EarthquakeTimerUI;
 	public Text WaveScoreUI;
-	public Text HitResultUI;
+	public Image HitResult;
+
+	public Sprite Perfect;
+	public Sprite Good;
+	public Sprite Miss;
 
 	public Light FeedbackLight;
 	float initialFeedbackLightIntensity;
@@ -41,6 +49,7 @@ public class WaveManager : MonoBehaviour {
 
 	public DrumPattern EasyPattern;
 	public DrumPattern MediumPattern;
+	public DrumPattern MediumHardPattern;
 	public DrumPattern HardPattern;
 
 	DrumPattern CurrentPattern;
@@ -117,8 +126,15 @@ public class WaveManager : MonoBehaviour {
 
 	DrumPattern GetCurrentPattern() {
 		// use the score to determine the correct pattern and return it
-
-		return EasyPattern;
+		if (WaveScore < 150) {
+			return EasyPattern;
+		} else if (WaveScore < 300) {
+			return MediumPattern;
+		} else if (WaveScore < 450) {
+			return MediumHardPattern;
+		} else { 
+			return HardPattern;
+		}
 	}
 
 	void SpawnWave(XboxButton waveType) {
@@ -153,7 +169,7 @@ public class WaveManager : MonoBehaviour {
 		List<Wave> WavesToKeep = new List<Wave> ();
 
 		foreach (Wave wave in WaveList) {
-			if (wave.Percentage > 0.1f) {
+			if (wave.Percentage > 0.18f) {
 				wave.Percentage -= waveShrinkRate * Time.deltaTime;
 				wave.WavePrefab.transform.localScale = new Vector3 (wave.Percentage, wave.Percentage, wave.Percentage);
 				WavesToKeep.Add (wave);
@@ -204,13 +220,11 @@ public class WaveManager : MonoBehaviour {
 		audioSource.pitch = basePitch * HitPitchMultiplier;
 		audioSource.Play ();
 
-		string resultText = "PERFECT";
-		ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
+		HitResult.sprite = Perfect;
+
 		WaveScore += 10;
 
 		IntensifyLight (2f);
-
-		DisplayHitResult (resultText);
 	}
 
 	private void  WaveClose (XboxButton buttonPressed)
@@ -220,13 +234,11 @@ public class WaveManager : MonoBehaviour {
 		audioSource.pitch = basePitch * ClosePitchMultiplier;
 		audioSource.Play ();
 
-		string resultText = "GOOD";
-		ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
+		HitResult.sprite = Good;
+
 		WaveScore += 2;
 
 		IntensifyLight (1.3f);
-
-		DisplayHitResult (resultText);
 	}
 
 	private void  WaveMiss (XboxButton buttonPressed)
@@ -236,20 +248,15 @@ public class WaveManager : MonoBehaviour {
 		audioSource.pitch = basePitch * MissPitchMultiplier;
 		audioSource.Play ();
 
-		string resultText = "MISS";
-		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
-		WaveScore -= 5;
+		HitResult.sprite = Miss;
 
-		DisplayHitResult (resultText);
+		WaveScore -= 5;
 	}
 
 	private void  WaveIgnored ()
 	{
-		string resultText = "NO DRUM";
-		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+		HitResult.sprite = Miss;
 		WaveScore -= 2;
-
-		DisplayHitResult (resultText);
 	}
 
 	private void  WaveIncorrect (XboxButton buttonPressed)
@@ -259,17 +266,9 @@ public class WaveManager : MonoBehaviour {
 		audioSource.pitch = basePitch * MissPitchMultiplier;
 		audioSource.Play ();
 
-		string resultText = "WRONG DRUM";
-		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
+		HitResult.sprite = Miss;
+	
 		WaveScore -= 7;
-
-		DisplayHitResult (resultText);
-	}
-
-	private void DisplayHitResult (string resultText)
-	{
-//		Debug.Log (resultText);
-		HitResultUI.text = resultText;
 	}
 
 	void SetupPatterns() {
@@ -294,6 +293,16 @@ public class WaveManager : MonoBehaviour {
 		MediumPattern.Dict.Add (14, XboxButton.X);
 		MediumPattern.Dict.Add (16, XboxButton.A);
 
+		MediumHardPattern = new DrumPattern ();
+		MediumHardPattern.Dict.Add (2, XboxButton.A);
+		MediumHardPattern.Dict.Add (4, XboxButton.A);
+		MediumHardPattern.Dict.Add (5, XboxButton.Y);
+		MediumHardPattern.Dict.Add (6, XboxButton.X);
+		MediumHardPattern.Dict.Add (8, XboxButton.A);
+		MediumHardPattern.Dict.Add (10, XboxButton.A);
+		MediumHardPattern.Dict.Add (12, XboxButton.X);
+		MediumHardPattern.Dict.Add (14, XboxButton.A);
+
 		HardPattern = new DrumPattern ();
 		HardPattern.Dict.Add (2, XboxButton.A);
 		HardPattern.Dict.Add (4, XboxButton.A);
@@ -307,7 +316,7 @@ public class WaveManager : MonoBehaviour {
 		HardPattern.Dict.Add (13, XboxButton.Y);
 		HardPattern.Dict.Add (14, XboxButton.A);
 
-		CurrentPattern = MediumPattern;
+		CurrentPattern = EasyPattern;
 	}
 
 	void IntensifyLight(float multiplier) {
