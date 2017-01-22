@@ -10,7 +10,7 @@ public class WaveManager : MonoBehaviour {
 	const float waveSpawnDelay = 0.5f;
 	const float waveStartRadius = 1f;
 	const float waveShrinkRate = 0.5f;
-	const int EarthquakeTimerStartCount = 10;
+	const int EarthquakeTimerStartCount = 60;
 	const int CutSceneTimerCount = 20;
 
 	public float HeartBeatInMilliseconds = 300f;
