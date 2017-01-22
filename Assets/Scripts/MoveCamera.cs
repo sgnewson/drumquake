@@ -2,7 +2,6 @@
 
 public class MoveCamera : MonoBehaviour {
     
-
 	private Vector3 originPosition;
 	private Quaternion originRotation;
 	public float shake_decay;
@@ -26,7 +25,7 @@ public class MoveCamera : MonoBehaviour {
 	void UpdateCameraShake ()
 	{
 		if (Input.GetKeyDown (KeyCode.Space)) {
-			Shake ();
+			Shake (0.3f);
 		}
 		if (shake_intensity > 0) {
 			transform.position = originPosition + Random.insideUnitSphere * shake_intensity;
@@ -35,11 +34,12 @@ public class MoveCamera : MonoBehaviour {
 		}
 	}
 
-	void Shake(){
+	public void Shake (float shakeIntensity)
+	{
+		Debug.Log ("Quake Magnitude: " + shakeIntensity);
 		originPosition = transform.position;
 		originRotation = transform.rotation;
-		shake_intensity = .3f;
+		shake_intensity = shakeIntensity;
 		shake_decay = 0.002f;
 	}
-
 }

@@ -12,6 +12,9 @@ public class WaveManager : MonoBehaviour {
 	const float waveShrinkRate = 0.5f;
 	const int earthquakeTimerStartCount = 60;
 
+	public float HeartBeatInMilliseconds = 300f;
+	int beatCount;
+
 	private float WaveScore = 0f;
 	private int WaveCount = 0;
 	private int EarthquakeTimerCount = earthquakeTimerStartCount;
@@ -23,12 +26,18 @@ public class WaveManager : MonoBehaviour {
 	public GameObject WavePrefabLocal;
 	public List<Wave> WaveList;
 	public GameObject ReferenceWave;
-	public MoveCamera mainCamera;
+	public MoveCamera MainCamera;
 
 	public Material redCircle;
 	public Material blueCircle;
 	public Material greenCircle;
 	public Material yellowCircle;
+
+	Dictionary<XboxButton, AudioStuff> ColorMap;
+
+	public Dictionary<int, DrumPattern> AllPatterns;
+	public DrumPattern EasyPattern;
+	DrumPattern CurrentPattern;
 
 	Dictionary<XboxButton, AudioStuff> clipForButton;
 
@@ -61,30 +70,30 @@ public class WaveManager : MonoBehaviour {
 	public LerpMode TransitionLerpMode;
 
 	void Awake() {
-		clipForButton = new Dictionary<XboxButton, AudioStuff> ();
-		clipForButton.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume, greenCircle));
-		clipForButton.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume, redCircle));
-		clipForButton.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume, blueCircle));
-		clipForButton.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume, yellowCircle));
+		ColorMap = new Dictionary<XboxButton, AudioStuff> ();
+		ColorMap.Add (XboxButton.A, new AudioStuff(GreenSound, baseGreenVolume, greenCircle));
+		ColorMap.Add (XboxButton.B, new AudioStuff(RedSound, baseRedVolume, redCircle));
+		ColorMap.Add (XboxButton.X, new AudioStuff(BlueSound, baseBlueVolume, blueCircle));
+		ColorMap.Add (XboxButton.Y, new AudioStuff(YellowSound, baseYellowVolume, yellowCircle));
 
 		audioSource = this.GetComponent<AudioSource> ();
 		WaveList = new List<Wave> ();
-		WaveScoreUI = GameObject.Find("WaveScoreUI").GetComponent<Text>();
-		EarthquakeTimerUI = GameObject.Find("EarthquakeTimerUI").GetComponent<Text>();
-		mainCamera = GameObject.Find ("Main Camera").GetComponent<MoveCamera> ();
 
-		InvokeRepeating ("SpawnGreenWave", 0.0f, 1.0f * speedMultiplier);
-		InvokeRepeating ("SpawnBlueWave", 0.5f, 3.0f * speedMultiplier);
-		InvokeRepeating ("Earthquake", 0f, 1f);
+		SetupPatterns ();
+
+		InvokeRepeating ("Heartbeat", 0f, HeartBeatInMilliseconds / 1000f);
+
+		InvokeRepeating ("EarthquakeCountdown", 0f, 1f);
+		beatCount = 0;
 	}
 
-	void SpawnGreenWave() {
-		SpawnWave (XboxButton.A);
-	}
+	void Heartbeat() {
+		beatCount++;
 
-	void SpawnBlueWave() {
-		if (WaveScore > 80) {
-			SpawnWave (XboxButton.X);
+		Debug.Log ("Beat count: " + beatCount);
+
+		if (CurrentPattern.Dict.ContainsKey (beatCount) == true) {
+			SpawnWave (CurrentPattern.Dict [beatCount]);
 		}
 	}
 
@@ -93,16 +102,15 @@ public class WaveManager : MonoBehaviour {
 		GameObject newWaveGameObject = (GameObject) GameObject.Instantiate (WavePrefabLocal, new Vector3 (0f, 0f, 0f), Quaternion.identity);
 		newWaveGameObject.SetActive (true);
 
-		newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = clipForButton[waveType].circle;
-
+		newWaveGameObject.transform.Find("WavePrefab").gameObject.GetComponent<Renderer> ().material = ColorMap[waveType].circle;
 			
 		Wave newWave = new Wave (waveType, waveStartRadius, newWaveGameObject);
 		WaveList.Add (newWave);
 	}
 
-	void Earthquake() {
+	void EarthquakeCountdown() {
 		if (EarthquakeTimerCount <= 0) {
-			mainCamera.SendMessage ("Shake");
+			MainCamera.Shake (WaveScore / 1000);
 			EarthquakeTimerCount = earthquakeTimerStartCount;
 		} else {
 			EarthquakeTimerCount--;
@@ -133,8 +141,13 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	public void HandleDrumPress(XboxButton buttonPressed) {
+		if (WaveList.Count == 0) {
+			WaveMiss (buttonPressed);
+			return;
+		}
+
 		Wave wave = WaveList [0];
-		Debug.Log ("percentage: " + wave.Percentage);
+//		Debug.Log ("percentage: " + wave.Percentage);
 
 		float delta = Mathf.Abs (0.2f - wave.Percentage);
 
@@ -151,13 +164,12 @@ public class WaveManager : MonoBehaviour {
 			WaveMiss (buttonPressed);
 		}
 		wave.AttemptedHit = true;
-			
 	}
 
 	private void  WaveHit (XboxButton buttonPressed)
 	{
-		audioSource.clip = clipForButton[buttonPressed].thisClip;
-		audioSource.volume = clipForButton[buttonPressed].Volume * HitVolumeMultiplier;
+		audioSource.clip = ColorMap[buttonPressed].thisClip;
+		audioSource.volume = ColorMap[buttonPressed].Volume * HitVolumeMultiplier;
 		audioSource.pitch = basePitch * HitPitchMultiplier;
 		audioSource.Play ();
 
@@ -170,8 +182,8 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveClose (XboxButton buttonPressed)
 	{
-		audioSource.clip = clipForButton[buttonPressed].thisClip;
-		audioSource.volume = clipForButton[buttonPressed].Volume * CloseVolumeMultiplier;
+		audioSource.clip = ColorMap[buttonPressed].thisClip;
+		audioSource.volume = ColorMap[buttonPressed].Volume * CloseVolumeMultiplier;
 		audioSource.pitch = basePitch * ClosePitchMultiplier;
 		audioSource.Play ();
 
@@ -184,8 +196,8 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveMiss (XboxButton buttonPressed)
 	{
-		audioSource.clip = clipForButton[buttonPressed].thisClip;
-		audioSource.volume = clipForButton[buttonPressed].Volume * MissVolumeMultiplier;
+		audioSource.clip = ColorMap[buttonPressed].thisClip;
+		audioSource.volume = ColorMap[buttonPressed].Volume * MissVolumeMultiplier;
 		audioSource.pitch = basePitch * MissPitchMultiplier;
 		audioSource.Play ();
 
@@ -207,8 +219,8 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveIncorrect (XboxButton buttonPressed)
 	{
-		audioSource.clip = clipForButton[buttonPressed].thisClip;
-		audioSource.volume = clipForButton[buttonPressed].Volume * MissVolumeMultiplier;
+		audioSource.clip = ColorMap[buttonPressed].thisClip;
+		audioSource.volume = ColorMap[buttonPressed].Volume * MissVolumeMultiplier;
 		audioSource.pitch = basePitch * MissPitchMultiplier;
 		audioSource.Play ();
 
@@ -221,8 +233,20 @@ public class WaveManager : MonoBehaviour {
 
 	private void DisplayHitResult (string resultText)
 	{
-		Debug.Log (resultText);
+//		Debug.Log (resultText);
 		HitResultUI.text = resultText;
+	}
+
+	void SetupPatterns() {
+		AllPatterns = new Dictionary<int, DrumPattern> ();
+
+		EasyPattern = new DrumPattern ();
+		EasyPattern.Dict.Add (8, XboxButton.A);
+		EasyPattern.Dict.Add (16, XboxButton.A);
+		EasyPattern.Dict.Add (24, XboxButton.A);
+		EasyPattern.Dict.Add (32, XboxButton.A);
+
+		CurrentPattern = EasyPattern;
 	}
 
 	public class AudioStuff {
@@ -235,7 +259,14 @@ public class WaveManager : MonoBehaviour {
 			Volume = v;
 			this.circle = circle;
 		}
+	}
 
+	public class DrumPattern {
+		public Dictionary<int, XboxButton> Dict;
+
+		public DrumPattern() {
+			Dict = new Dictionary<int, XboxButton>();
+		}
 	}
 
 }
