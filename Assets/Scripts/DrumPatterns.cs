@@ -9,6 +9,7 @@ public class DrumPatterns {
 	private static DrumPattern Pattern2;
 	private static DrumPattern Pattern3;
 	private static DrumPattern Pattern4;
+	private static DrumPattern Pattern5;
 
 
 	public static DrumPattern GetCurrentPattern(int score) {
@@ -19,8 +20,10 @@ public class DrumPatterns {
 			return Pattern2;
 		} else if (score < 450) {
 			return Pattern3;
-		} else { 
+		} else if (score < 600) { 
 			return Pattern4;
+		} else {
+			return Pattern5;
 		}
 	}	
 
@@ -64,6 +67,17 @@ public class DrumPatterns {
 		Pattern4.Dict.Add (12, XboxButton.A);
 		Pattern4.Dict.Add (14, XboxButton.X);
 		Pattern4.Dict.Add (15, XboxButton.Y);
+
+		Pattern5 = new DrumPattern ();
+		Pattern5.Dict.Add (2, XboxButton.A);
+		Pattern5.Dict.Add (4, XboxButton.A);
+		Pattern5.Dict.Add (6, XboxButton.X);
+		Pattern5.Dict.Add (7, XboxButton.Y);
+		Pattern5.Dict.Add (8, XboxButton.B);
+		Pattern5.Dict.Add (10, XboxButton.A);
+		Pattern5.Dict.Add (12, XboxButton.A);
+		Pattern5.Dict.Add (14, XboxButton.X);
+		Pattern5.Dict.Add (15, XboxButton.Y);
 	}
 		
 	public class DrumPattern {
