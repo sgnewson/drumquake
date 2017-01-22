@@ -215,7 +215,7 @@ public class Tower : MonoBehaviour
         return true;
     }
 
-    private List<Block> CreateBlockList(int x, int y, int newX, int newY)
+    private List<Block> CreateTowerBlockList(int x, int y, int newX, int newY, bool removeCenter = true)
     {
         var blockList = new List<Block> {
                 this.glueBlockMatrix[y-1, x-1],
@@ -229,7 +229,10 @@ public class Tower : MonoBehaviour
                 this.glueBlockMatrix[y+1, x+1]
             };
 
-        blockList.Remove(blockList.Single(b => b!= null && b.gridX == newX && b.gridY == newY));
+        if(removeCenter)
+        {
+            blockList.Remove(blockList.Single(b => b != null && b.gridX == newX && b.gridY == newY));
+        }
 
         return blockList;
     }
@@ -249,26 +252,111 @@ public class Tower : MonoBehaviour
         }
     }
 
-    public void AddGlues(Block newBlock)
+    private void ClearJointsFromBlock(Block block)
+    {
+        var joints = block.GetComponents<FixedJoint>();
+        foreach(var j in joints)
+        {
+            Destroy(j);
+        }
+    }
+
+    private void Glue3x3(List<TowerBlock> blocks)
+    {
+        if(blocks.Count != 9)
+        {
+            throw new System.Exception("Missing block from list");
+        }
+
+        //nw
+        ClearJointsFromBlock(blocks[0]);
+
+        var newJoint = blocks[0].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[1].gameObject.GetComponent<Rigidbody>();
+
+        newJoint = blocks[0].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[3].gameObject.GetComponent<Rigidbody>();
+
+        //ne
+        ClearJointsFromBlock(blocks[2]);
+
+        newJoint = blocks[2].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[1].gameObject.GetComponent<Rigidbody>();
+
+        newJoint = blocks[2].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[5].gameObject.GetComponent<Rigidbody>();
+
+        //se
+        ClearJointsFromBlock(blocks[8]);
+
+        newJoint = blocks[8].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[5].gameObject.GetComponent<Rigidbody>();
+
+        newJoint = blocks[8].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[7].gameObject.GetComponent<Rigidbody>();
+
+        //sw
+        ClearJointsFromBlock(blocks[6]);
+
+        newJoint = blocks[6].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[3].gameObject.GetComponent<Rigidbody>();
+
+        newJoint = blocks[6].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[7].gameObject.GetComponent<Rigidbody>();
+
+        //center
+        ClearJointsFromBlock(blocks[4]);
+
+        newJoint = blocks[4].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[1].gameObject.GetComponent<Rigidbody>();
+
+        newJoint = blocks[4].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[5].gameObject.GetComponent<Rigidbody>();
+
+        newJoint = blocks[4].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[7].gameObject.GetComponent<Rigidbody>();
+
+        newJoint = blocks[4].gameObject.AddComponent<FixedJoint>();
+        newJoint.connectedBody = blocks[3].gameObject.GetComponent<Rigidbody>();
+    }
+
     {
         var x = newBlock.gridX;
         var y = newBlock.gridY;
-        
+        /*
+        var b11 = this.glueBlockMatrix[y - 2, x - 2];
+        var b12 = this.glueBlockMatrix[y - 2, x - 1];
+        var b13 = this.glueBlockMatrix[y - 2, x];
+        var b14 = this.glueBlockMatrix[y - 2, x + 1];
+        var b15 = this.glueBlockMatrix[y - 2, x + 2];
+        var b21 = this.glueBlockMatrix[y - 1, x - 2];
+        var b22 = this.glueBlockMatrix[y - 1, x - 1];
+        var b23 = this.glueBlockMatrix[y - 1, x];
+        var b24 = this.glueBlockMatrix[y - 1, x + 1];
+        var b25 = this.glueBlockMatrix[y - 1, x + 2];
+        var b31 = this.glueBlockMatrix[y, x - 2];
+        var b32 = this.glueBlockMatrix[y, x - 1];
+        var b33 = this.glueBlockMatrix[y, x];
+        var b34 = this.glueBlockMatrix[y, x + 1];
+        var b35 = this.glueBlockMatrix[y, x + 2];
+        var b41 = this.glueBlockMatrix[y + 1, x - 2];
+        var b42 = this.glueBlockMatrix[y + 1, x - 1];
+        var b43 = this.glueBlockMatrix[y + 1, x];
+        var b44 = this.glueBlockMatrix[y + 1, x + 1];
+        var b45 = this.glueBlockMatrix[y + 1, x + 2];
+        var b51 = this.glueBlockMatrix[y + 2, x - 2];
+        var b52 = this.glueBlockMatrix[y + 2, x - 1];
+        var b53 = this.glueBlockMatrix[y + 2, x];
+        var b54 = this.glueBlockMatrix[y + 2, x + 1];
+        var b55 = this.glueBlockMatrix[y + 2, x + 2];
+        */
         //c1
         var auxBlockList = CreateBlockList(x + 1, y - 1, x, y);
-        /*
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            var newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
-            newJoint.connectedBody = this.glueBlockMatrix[y-1, x].gameObject.GetComponent<Rigidbody>();
-
-            newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
-            newJoint.connectedBody = this.glueBlockMatrix[y, x + 1].gameObject.GetComponent<Rigidbody>();
-
-            newJoint = newBlock.gameObject.AddComponent<FixedJoint>();
-            newJoint.connectedBody = this.glueBlockMatrix[y, x + 1].gameObject.GetComponent<Rigidbody>();
+            Glue3x3(CreateTowerBlockList(x + 1, y - 1, x, y, false));
 
             return;
         }
@@ -278,6 +366,9 @@ public class Tower : MonoBehaviour
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
+
+            Glue3x3(CreateTowerBlockList(x + 1, y, x, y, false));
+
             return;
         }
 
@@ -286,6 +377,9 @@ public class Tower : MonoBehaviour
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
+
+            Glue3x3(CreateTowerBlockList(x + 1, y + 1, x, y, false));
+
             return;
         }
 
@@ -294,6 +388,9 @@ public class Tower : MonoBehaviour
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
+
+            Glue3x3(CreateTowerBlockList(x, y + 1, x, y, false));
+
             return;
         }
 
@@ -302,6 +399,9 @@ public class Tower : MonoBehaviour
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
+
+            Glue3x3(CreateTowerBlockList(x - 1, y + 1, x, y, false));
+
             return;
         }
 
@@ -310,6 +410,9 @@ public class Tower : MonoBehaviour
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
+
+            Glue3x3(CreateTowerBlockList(x - 1, y, x, y, false));
+
             return;
         }
 
@@ -318,6 +421,9 @@ public class Tower : MonoBehaviour
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
+
+            Glue3x3(CreateTowerBlockList(x - 1, y - 1, x, y, false));
+
             return;
         }
 
@@ -326,6 +432,9 @@ public class Tower : MonoBehaviour
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
+
+            Glue3x3(CreateTowerBlockList(x, y - 1, x, y, false));
+
             return;
         }
 
@@ -334,9 +443,12 @@ public class Tower : MonoBehaviour
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
+
+            Glue3x3(CreateTowerBlockList(x, y, x, y, false));
+
             return;
         }
-        */
+
         //c10
         auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y-2, x],
