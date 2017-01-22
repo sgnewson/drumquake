@@ -35,7 +35,7 @@ public class Spawner : MonoBehaviour
             : currentSelectedBlockType == 1
                 ? Color.green
                 : Color.blue;
-        towerBlock.GetComponent<Renderer>().material = material;
+        //towerBlock.GetComponent<Renderer>().material = material;
     }
 
     public Block SpawnBlock()
@@ -66,7 +66,7 @@ public class Spawner : MonoBehaviour
                     }
             }
 
-            newCube.GetComponent<Renderer>().material = material;
+            //newCube.GetComponent<Renderer>().material = material;
 
             newCube.gridX = (int)transform.position.x;
             newCube.gridY = (int)transform.position.y;
