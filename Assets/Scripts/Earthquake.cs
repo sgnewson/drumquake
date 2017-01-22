@@ -20,6 +20,7 @@ public class Earthquake : MonoBehaviour
     public float speed = 0.1f;
 
 	public void EarthquakeMeDaddy(float magnitude) {
+		Debug.Log ("Quaking========");
 		foreach (Block block in tower.glueBlockMatrix)
 		{
 			if (block != null)
@@ -74,7 +75,7 @@ public class Earthquake : MonoBehaviour
 
 		elapsedShakeTime = 0f;
 		baseShakeCount = 0;
-		Invoke ("StopShakeBase", WaveManager.CutSceneTimerCount);
+		Invoke ("StopShakeBase", 10);
 		InvokeRepeating ("ShakeBase", 0f, 0.2f);
 
         shake_intensity = shakeIntensity;
@@ -98,21 +99,21 @@ public class Earthquake : MonoBehaviour
 	}
 
 	void StopShakeBase() {
-		for (int x = 0; x < tower.gridHeight; x++) {
-			for (int y = 0; y < tower.gridWidth; y++) {
-				var towerGridSlot = tower.gridCells [x, y];
-				if (towerGridSlot != null && towerGridSlot.block != null) {
-					if (towerGridSlot.block.fellOffBase) {
-						continue;
-					}
-					
-					towerGridSlot.block.gameObject.transform.position = tower.gridCells [x, y].block.InitialPosition;
-					towerGridSlot.block.gameObject.transform.rotation = Quaternion.identity;
-					towerGridSlot.block.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-					towerGridSlot.block.GetComponent<Rigidbody>().useGravity = false;
-				}
-			}
-		}
+//		for (int x = 0; x < tower.gridHeight; x++) {
+//			for (int y = 0; y < tower.gridWidth; y++) {
+//				var towerGridSlot = tower.gridCells [x, y];
+//				if (towerGridSlot != null && towerGridSlot.block != null) {
+//					if (towerGridSlot.block.fellOffBase) {
+//						continue;
+//					}
+//					
+//					towerGridSlot.block.gameObject.transform.position = tower.gridCells [x, y].block.InitialPosition;
+//					towerGridSlot.block.gameObject.transform.rotation = Quaternion.identity;
+//					towerGridSlot.block.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+//					towerGridSlot.block.GetComponent<Rigidbody>().useGravity = false;
+//				}
+//			}
+//		}
 
 		CancelInvoke ("ShakeBase");
 	}

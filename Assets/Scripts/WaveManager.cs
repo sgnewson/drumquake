@@ -11,7 +11,6 @@ public class WaveManager : MonoBehaviour {
 	const float waveStartRadius = 1f;
 	const float waveShrinkRate = 0.5f;
 	const int EarthquakeTimerStartCount = 60;
-	public const int CutSceneTimerCount = 20;
 
 	public Tower tower;
 
@@ -130,30 +129,34 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	void EarthquakeCountdown() {
-		EarthquakeTimerCount--;
-		BuilderScoreUI.text = "Builder Score: " + tower.GetBuilderScore ();
 			
-        if (EarthquakeTimerCount <= 0)
+        if (EarthquakeTimerCount == 0)
         {
-			EarthquakeTimerUI.text = "Countdown: 0";
+//			EarthquakeTimerUI.text = "Countdown: 0";
+			if (GameManager.PlayOn) {
+				Invoke ("StartEarthquake", 5f);
+			}
 			GameManager.PlayOn = false;
-			Invoke ("StartEarthquake", 5f);
 			tower.HandleBeforeEarthquake ();
         }
-        else if (EarthquakeTimerCount <= EarthquakeTimerStartCount)
+        else 
         {
+			EarthquakeTimerCount--;
+
 			tower.HandleAfterEarthquake ();
 
             GameManager.PlayOn = true;
             EarthquakeTimerUI.text = "Countdown: " + EarthquakeTimerCount;
         }
+		BuilderScoreUI.text = "Builder Score: " + tower.GetBuilderScore ();
+
 	}
 
 	void StartEarthquake() {
 		MainCamera.GetComponent<Earthquake>().EarthquakeMeDaddy(WaveScore / 1000f);
 //		MainCamera.GetComponent<Earthquake>().EarthquakeMeDaddy(0.03f);
-		WaveScore = 0;
-		EarthquakeTimerCount = EarthquakeTimerStartCount + CutSceneTimerCount;
+//		WaveScore = 0;
+
 		EarthquakeTimerUI.text = "Earthquake!!!!";
 	}
 
