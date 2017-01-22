@@ -27,6 +27,9 @@ public class Block : MonoBehaviour
 
     void OnMouseDown()
     {
+		if (!GameManager.PlayOn) {
+			return;
+		}
         gameObject.GetComponent<Rigidbody>().detectCollisions = false;
         screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
         offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
@@ -38,7 +41,11 @@ public class Block : MonoBehaviour
     }
 
     void OnMouseDrag()
-    {
+	{
+		if (!GameManager.PlayOn) {
+			return;
+		}
+
         if (!locked)
         {
             if (!isColliding)
