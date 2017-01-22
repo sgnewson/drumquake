@@ -12,6 +12,7 @@ public class MenuController : MonoBehaviour {
     public Canvas exitMenu;
     public Button newGameButton;
     public Button exitButton;
+	public Animator IntroAnim;
    
     void Start () {
 
@@ -27,8 +28,14 @@ public class MenuController : MonoBehaviour {
     /// </summary>
     public void StartGame()
     {
-        SceneManager.LoadScene(levelScene);
+		IntroAnim.SetTrigger ("outro");
+		StartCoroutine ("StartGameAfterDelay");
     }
+
+	IEnumerator StartGameAfterDelay() {
+		yield return new WaitForSeconds (2.5f);
+		SceneManager.LoadScene(levelScene);
+	}
 
     /// <summary>
     /// Creates a pop up for confirmation
