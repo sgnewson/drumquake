@@ -7,7 +7,7 @@ using XboxCtrlrInput;
 public class Tower : MonoBehaviour
 {
     private int _totalHeight;
-    public Spawner blockSpawner;
+//    public Spawner blockSpawner;
 
     public TowerGridSlot[,] gridCells;
     public Block[,] glueBlockMatrix;
@@ -58,13 +58,13 @@ public class Tower : MonoBehaviour
     }
 
 	public void HandleBeforeEarthquake() {
-		lastBlock.gameObject.SetActive (false);
+//		lastBlock.gameObject.SetActive (false);
 	}
 
 	public void HandleAfterEarthquake() {
-		lastBlock.gameObject.SetActive (true);
-		lastBlock.gameObject.GetComponent<Rigidbody> ().useGravity = false;
-		lastBlock.gameObject.GetComponent<Rigidbody> ().constraints = RigidbodyConstraints.FreezeRotation;
+//		lastBlock.gameObject.SetActive (true);
+//		lastBlock.gameObject.GetComponent<Rigidbody> ().useGravity = false;
+//		lastBlock.gameObject.GetComponent<Rigidbody> ().constraints = RigidbodyConstraints.FreezeRotation;
 	}
 
  	// Use this for initialization
@@ -83,12 +83,12 @@ public class Tower : MonoBehaviour
         glueBlockMatrix = new Block[gridHeight, gridWidth];
 
         BuildGridCells();
-        if (!blockSpawner) { return; }
-        
-        lastBlock = blockSpawner.SpawnBlock();
-        glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
-        AddGlues(lastBlock);
-        blocks.Add(lastBlock);
+//        if (!blockSpawner) { return; }
+//        
+//        lastBlock = blockSpawner.SpawnBlock();
+//        glueBlockMatrix[lastBlock.gridY, lastBlock.gridX] = lastBlock;
+//        AddGlues(lastBlock);
+//        blocks.Add(lastBlock);
     }
 
 	void PrintAllBlocks() {
@@ -228,6 +228,7 @@ public class Tower : MonoBehaviour
         block.locked = true;
         this.AddGlues(block);
         blocks.Add(block);
+		block.Score = block.gridY - 1;
 
         CreateNewBlock();
 
