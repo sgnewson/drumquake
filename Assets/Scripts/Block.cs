@@ -22,6 +22,8 @@ public class Block : MonoBehaviour
     int row;
     int col;
 
+	public bool fellOffBase;
+
     public int gridX { get; set; }
     public int gridY { get; set; }
     public int type { get; set; }
@@ -30,6 +32,7 @@ public class Block : MonoBehaviour
 
     private void Start()
     {
+		fellOffBase = false;
         locked = false;
         isColliding = false;
         ResetCanMove();
@@ -187,6 +190,13 @@ public class Block : MonoBehaviour
             }
         }
     }
+
+	private void OnCollisionEnter(Collision collision) {
+		if (collision.collider.name == "Terrain") {
+			Debug.Log ("Kill block: " + this.gameObject.name);
+			fellOffBase = true;
+		}
+	}
 
     private void OnCollisionExit(Collision collision)
     {

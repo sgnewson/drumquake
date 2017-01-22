@@ -100,11 +100,16 @@ public class Earthquake : MonoBehaviour
 	void StopShakeBase() {
 		for (int x = 0; x < tower.gridHeight; x++) {
 			for (int y = 0; y < tower.gridWidth; y++) {
-				if (tower.gridCells [x, y] != null && tower.gridCells [x, y].block != null) {
-					tower.gridCells [x, y].block.gameObject.transform.position = tower.gridCells [x, y].block.InitialPosition;
-					tower.gridCells [x, y].block.gameObject.transform.rotation = Quaternion.identity;
-					tower.gridCells [x, y].block.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-					tower.gridCells [x, y].block.GetComponent<Rigidbody>().useGravity = false;
+				var towerGridSlot = tower.gridCells [x, y];
+				if (towerGridSlot != null && towerGridSlot.block != null) {
+					if (towerGridSlot.block.fellOffBase) {
+						continue;
+					}
+					
+					towerGridSlot.block.gameObject.transform.position = tower.gridCells [x, y].block.InitialPosition;
+					towerGridSlot.block.gameObject.transform.rotation = Quaternion.identity;
+					towerGridSlot.block.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+					towerGridSlot.block.GetComponent<Rigidbody>().useGravity = false;
 				}
 			}
 		}
