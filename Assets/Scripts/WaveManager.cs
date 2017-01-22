@@ -38,7 +38,6 @@ public class WaveManager : MonoBehaviour {
 
 	Dictionary<XboxButton, AudioStuff> ColorMap;
 
-	public Dictionary<int, DrumPattern> AllPatterns;
 	public DrumPattern EasyPattern;
 	DrumPattern CurrentPattern;
 
@@ -93,13 +92,25 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	void Heartbeat() {
-		beatCount = (beatCount + 1) % 33;
+		beatCount++;
+
+		if (beatCount >= 32) {
+			// Check score and set the next pattern appropriately
+			CurrentPattern = GetCurrentPattern();
+			beatCount = 0;
+		}
 
 		Debug.Log ("Beat count: " + beatCount);
 
 		if (CurrentPattern.Dict.ContainsKey (beatCount) == true) {
 			SpawnWave (CurrentPattern.Dict [beatCount]);
 		}
+	}
+
+	DrumPattern GetCurrentPattern() {
+		// use the score to determine the correct pattern and return it
+
+		return EasyPattern;
 	}
 
 	void SpawnWave(XboxButton waveType) {
@@ -178,7 +189,7 @@ public class WaveManager : MonoBehaviour {
 		audioSource.pitch = basePitch * HitPitchMultiplier;
 		audioSource.Play ();
 
-		string resultText = "HIT :) " + buttonPressed;
+		string resultText = "PERFECT";
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.green;
 		WaveScore += 10;
 
@@ -194,7 +205,7 @@ public class WaveManager : MonoBehaviour {
 		audioSource.pitch = basePitch * ClosePitchMultiplier;
 		audioSource.Play ();
 
-		string resultText = "CLOSE :| " + buttonPressed;
+		string resultText = "GOOD";
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.yellow;
 		WaveScore += 2;
 
@@ -210,7 +221,7 @@ public class WaveManager : MonoBehaviour {
 		audioSource.pitch = basePitch * MissPitchMultiplier;
 		audioSource.Play ();
 
-		string resultText = "MISS :( " + buttonPressed;
+		string resultText = "MISS";
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
 		WaveScore -= 5;
 
@@ -219,7 +230,7 @@ public class WaveManager : MonoBehaviour {
 
 	private void  WaveIgnored ()
 	{
-		string resultText = "IGNORED :( ";
+		string resultText = "NO DRUM";
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
 		WaveScore -= 2;
 
@@ -233,7 +244,7 @@ public class WaveManager : MonoBehaviour {
 		audioSource.pitch = basePitch * MissPitchMultiplier;
 		audioSource.Play ();
 
-		string resultText = "INCORRECT!! ";
+		string resultText = "WRONG DRUM";
 		ReferenceWave.GetComponent<Renderer> ().material.color = Color.red;
 		WaveScore -= 7;
 
@@ -247,8 +258,6 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	void SetupPatterns() {
-		AllPatterns = new Dictionary<int, DrumPattern> ();
-
 		EasyPattern = new DrumPattern ();
 		EasyPattern.Dict.Add (8, XboxButton.A);
 		EasyPattern.Dict.Add (16, XboxButton.A);
@@ -287,5 +296,4 @@ public class WaveManager : MonoBehaviour {
 			Dict = new Dictionary<int, XboxButton>();
 		}
 	}
-
 }
