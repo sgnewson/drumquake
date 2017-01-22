@@ -215,7 +215,7 @@ public class Tower : MonoBehaviour
         return true;
     }
 
-    private List<Block> CreateTowerBlockList(int x, int y, int newX, int newY, bool removeCenter = true)
+    private List<Block> CreateBlockList(int x, int y, int newX, int newY, bool removeCenter = true)
     {
         var blockList = new List<Block> {
                 this.glueBlockMatrix[y-1, x-1],
@@ -261,7 +261,7 @@ public class Tower : MonoBehaviour
         }
     }
 
-    private void Glue3x3(List<TowerBlock> blocks)
+    private void Glue3x3(List<Block> blocks)
     {
         if(blocks.Count != 9)
         {
@@ -320,6 +320,7 @@ public class Tower : MonoBehaviour
         newJoint.connectedBody = blocks[3].gameObject.GetComponent<Rigidbody>();
     }
 
+    public void AddGlues(Block newBlock)
     {
         var x = newBlock.gridX;
         var y = newBlock.gridY;
@@ -356,7 +357,7 @@ public class Tower : MonoBehaviour
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            Glue3x3(CreateTowerBlockList(x + 1, y - 1, x, y, false));
+            Glue3x3(CreateBlockList(x + 1, y - 1, x, y, false));
 
             return;
         }
@@ -367,7 +368,7 @@ public class Tower : MonoBehaviour
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            Glue3x3(CreateTowerBlockList(x + 1, y, x, y, false));
+            Glue3x3(CreateBlockList(x + 1, y, x, y, false));
 
             return;
         }
@@ -378,7 +379,7 @@ public class Tower : MonoBehaviour
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            Glue3x3(CreateTowerBlockList(x + 1, y + 1, x, y, false));
+            Glue3x3(CreateBlockList(x + 1, y + 1, x, y, false));
 
             return;
         }
@@ -389,7 +390,7 @@ public class Tower : MonoBehaviour
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            Glue3x3(CreateTowerBlockList(x, y + 1, x, y, false));
+            Glue3x3(CreateBlockList(x, y + 1, x, y, false));
 
             return;
         }
@@ -400,7 +401,7 @@ public class Tower : MonoBehaviour
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            Glue3x3(CreateTowerBlockList(x - 1, y + 1, x, y, false));
+            Glue3x3(CreateBlockList(x - 1, y + 1, x, y, false));
 
             return;
         }
@@ -411,7 +412,7 @@ public class Tower : MonoBehaviour
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            Glue3x3(CreateTowerBlockList(x - 1, y, x, y, false));
+            Glue3x3(CreateBlockList(x - 1, y, x, y, false));
 
             return;
         }
@@ -422,7 +423,7 @@ public class Tower : MonoBehaviour
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            Glue3x3(CreateTowerBlockList(x - 1, y - 1, x, y, false));
+            Glue3x3(CreateBlockList(x - 1, y - 1, x, y, false));
 
             return;
         }
@@ -433,7 +434,7 @@ public class Tower : MonoBehaviour
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            Glue3x3(CreateTowerBlockList(x, y - 1, x, y, false));
+            Glue3x3(CreateBlockList(x, y - 1, x, y, false));
 
             return;
         }
@@ -444,7 +445,7 @@ public class Tower : MonoBehaviour
         {
             ProcessGroupEntity(auxBlockList, newBlock);
 
-            Glue3x3(CreateTowerBlockList(x, y, x, y, false));
+            Glue3x3(CreateBlockList(x, y, x, y, false));
 
             return;
         }
