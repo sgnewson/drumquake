@@ -24,6 +24,7 @@ public class WaveManager : MonoBehaviour {
 	public Text EarthquakeTimerUI;
 	public Text WaveScoreUI;
 	public Image HitResult;
+	public Text BuilderScoreUI;
 
 	public Sprite Perfect;
 	public Sprite Good;
@@ -130,7 +131,8 @@ public class WaveManager : MonoBehaviour {
 
 	void EarthquakeCountdown() {
 		EarthquakeTimerCount--;
-
+		BuilderScoreUI.text = "Builder Score: " + tower.GetBuilderScore ();
+			
         if (EarthquakeTimerCount <= 0)
         {
 			EarthquakeTimerUI.text = "Countdown: 0";

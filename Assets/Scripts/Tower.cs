@@ -638,4 +638,14 @@ public class Tower : MonoBehaviour
             return;
         }
     }
+
+	public int GetBuilderScore() {
+		int count = -1;
+		foreach (Block b in blocks) {
+			if (!b.fellOffBase) {
+				count++;
+			}
+		}
+		return count;
+	}
 }
