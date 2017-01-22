@@ -1,8 +1,14 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class Block : MonoBehaviour
 {
+    public class GroupEntity
+    {
+        public List<Block> memberBlocks;
+    }
+
     private Vector3 screenPoint;
     private Vector3 offset;
     private bool isColliding = false;
@@ -17,6 +23,9 @@ public class Block : MonoBehaviour
 
     public int gridX { get; set; }
     public int gridY { get; set; }
+    public int type { get; set; }
+
+    public GroupEntity blockGroup { get; set; }
 
     private void Start()
     {
@@ -25,6 +34,15 @@ public class Block : MonoBehaviour
         ResetCanMove();
         collapsed = false;
         zVal = gameObject.transform.position.z;
+    }
+
+    void Update()
+    {
+        //if (this.transform.position.y < -1)
+        //{
+        //    tower.glueBlockMatrix[gridY, gridX] = null;
+        //    Destroy(this);
+        //}
     }
 
     void OnMouseDown()

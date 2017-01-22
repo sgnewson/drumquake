@@ -6,7 +6,7 @@ public class TowerGridSlot : MonoBehaviour {
     public bool isFilled = false;
     
     public Tower tower;
-    public TowerBlock towerBlock;
+    public Block block;
 
     public int gridX { get; set; }
     public int gridY { get; set; }
@@ -53,7 +53,7 @@ public class TowerGridSlot : MonoBehaviour {
             return;
         }
 
-        var newCube = Instantiate(towerBlock, this.transform.position, Quaternion.identity);
+        var newCube = Instantiate(block, this.transform.position, Quaternion.identity);
         Material material = new Material(Shader.Find("Standard"));
         material.color = tower.currentSelectedBlockType == 0
             ? Color.red

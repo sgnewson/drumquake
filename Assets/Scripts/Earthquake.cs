@@ -30,7 +30,7 @@ public class Earthquake : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            foreach (Block block in tower.blockMatrix)
+            foreach (Block block in tower.glueBlockMatrix)
             {
                 if (block != null)
                 {
@@ -54,7 +54,7 @@ public class Earthquake : MonoBehaviour
         Debug.Log("Quake Magnitude: " + shakeIntensity);
         originPosition = transform.position;
 
-        foreach (Block block in tower.blockMatrix)
+        foreach (Block block in tower.glueBlockMatrix)
         {
             if (block != null)
             {

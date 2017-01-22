@@ -9,8 +9,8 @@ public class Tower : MonoBehaviour
     public Spawner blockSpawner;
 
     public TowerGridSlot[,] gridCells;
-    public TowerBlock[,] glueBlockMatrix;
-    public Block[,] blockMatrix;
+    public Block[,] glueBlockMatrix;
+    //public Block[,] blockMatrix;
     public List<Block> blocks;
     private Block lastBlock;
 
@@ -20,63 +20,16 @@ public class Tower : MonoBehaviour
     public TowerGridSlot towerGridSlot;
 
     public int currentSelectedBlockType { get; set; }
-    
-    private void BuildGridCells()
-    {
-        gridCells = new TowerGridSlot[gridHeight, gridWidth];
 
-        var buildDelta = new Vector3(0, 0, 0);
-        for (var y = 2; y < gridHeight - 2; y++)
-        {
-            buildDelta.x = 0;
-            for (var x = 2; x < gridWidth-2; x++)
-            {
-                var newCell = Instantiate(towerGridSlot, buildDelta, Quaternion.identity);
-                newCell.gameObject.SetActive(true);
-                buildDelta.x++;
-
-                newCell.gridX = x;
-                newCell.gridY = y;
-                gridCells[y, x] = newCell;
-            }
-            buildDelta.y++;
-        }
-    }
-
-    public bool AddBlock(Block block)
-    {
-        var x = block.gridX;
-        var y = block.gridY;
-
-        if(x < 0 || x >= gridWidth)
-        {
-            return false;
-        }
-
-        if (y < 0 || y >= gridHeight)
-        {
-            return false;
-        }
-
-        if (gridCells[x, y].isFilled)
-        {
-            return false;
-        }
-
-        this.blockMatrix[y, x] = block;
-        gridCells[x, y].isFilled = true;
-        return true;
-    }
-
-	// Use this for initialization
+ 	// Use this for initialization
 	void Start ()
     {
         currentSelectedBlockType = 0;
         gridHeight = 15 + 4;
         gridWidth = 8 + 4;
 
-        blockMatrix = new Block[gridHeight, gridWidth];
-        glueBlockMatrix = new TowerBlock[gridHeight, gridWidth];
+        //blockMatrix = new Block[gridHeight, gridWidth];
+        glueBlockMatrix = new Block[gridHeight, gridWidth];
 
         BuildGridCells();
         if (!blockSpawner) { return; }
@@ -122,12 +75,65 @@ public class Tower : MonoBehaviour
         {
             currentSelectedBlockType = 2;
         }
+
+        foreach (Block block in blocks)
+        {
+            if (block.transform.position.y < -1)
+            {
+                glueBlockMatrix[block.gridY, block.gridX] = null;
+                Destroy(this);
+            }
+        }
     }
 
-    public bool AddTowerBlock(TowerBlock newBlock)
+    private void BuildGridCells()
     {
-        var x = newBlock.gridX;
-        var y = newBlock.gridY;
+        gridCells = new TowerGridSlot[gridHeight, gridWidth];
+
+        var buildDelta = new Vector3(0, 0, 0);
+        for (var y = 2; y < gridHeight - 2; y++)
+        {
+            buildDelta.x = 0;
+            for (var x = 2; x < gridWidth - 2; x++)
+            {
+                var newCell = Instantiate(towerGridSlot, buildDelta, Quaternion.identity);
+                newCell.gameObject.SetActive(true);
+                buildDelta.x++;
+
+                newCell.gridX = x;
+                newCell.gridY = y;
+                gridCells[y, x] = newCell;
+            }
+            buildDelta.y++;
+        }
+    }
+
+    public bool AddBlock(Block block)
+    {
+        //var x = block.gridX;
+        //var y = block.gridY;
+
+        //if (x < 0 || x >= gridWidth)
+        //{
+        //    return false;
+        //}
+
+        //if (y < 0 || y >= gridHeight)
+        //{
+        //    return false;
+        //}
+
+        //if (gridCells[x, y].isFilled)
+        //{
+        //    return false;
+        //}
+
+        //this.blockMatrix[y, x] = block;
+        //gridCells[x, y].isFilled = true;
+        //return true;
+
+        var x = block.gridX;
+        var y = block.gridY;
 
         if (x < 2 || x >= gridWidth - 2)
         {
@@ -139,13 +145,49 @@ public class Tower : MonoBehaviour
             return false;
         }
 
-        this.glueBlockMatrix[y, x] = newBlock;
-        this.AddGlues(newBlock);
+        if (gridCells[x, y] != null)
+        {
+            if (gridCells[x, y].isFilled)
+            {
+                return false;
+            }
+        }
+
+        gridCells[x, y].isFilled = true;
+        this.glueBlockMatrix[y, x] = block;
+        this.AddGlues(block);
 
         return true;
     }
 
-    private bool CheckBlock(TowerBlock oldBlock, TowerBlock newBlock)
+    //public bool AddTowerBlock(TowerBlock newBlock)
+    //{
+    //    var x = newBlock.gridX;
+    //    var y = newBlock.gridY;
+
+    //    if (x < 2 || x >= gridWidth - 2)
+    //    {
+    //        return false;
+    //    }
+
+    //    if (y < 2 || y >= gridHeight - 2)
+    //    {
+    //        return false;
+    //    }
+
+    //    if (gridCells[x, y].isFilled)
+    //    {
+    //        return false;
+    //    }
+
+    //    gridCells[x, y].isFilled = true;
+    //    this.glueBlockMatrix[y, x] = newBlock;
+    //    this.AddGlues(newBlock);
+
+    //    return true;
+    //}
+
+    private bool CheckBlock(Block oldBlock, Block newBlock)
     {
         if(!oldBlock)
         {
@@ -160,7 +202,7 @@ public class Tower : MonoBehaviour
         return true;
     }
 
-    private bool CheckBlocks(List<TowerBlock> oldBlocks, TowerBlock newBlock )
+    private bool CheckBlocks(List<Block> oldBlocks, Block newBlock )
     {
         //check if right color and existance
         foreach(var b in oldBlocks)
@@ -182,9 +224,9 @@ public class Tower : MonoBehaviour
         return true;
     }
 
-    private List<TowerBlock> CreateTowerBlockList(int x, int y, int newX, int newY)
+    private List<Block> CreateBlockList(int x, int y, int newX, int newY)
     {
-        var towerBlockList = new List<TowerBlock> {
+        var blockList = new List<Block> {
                 this.glueBlockMatrix[y-1, x-1],
                 this.glueBlockMatrix[y-1, x],
                 this.glueBlockMatrix[y-1, x+1],
@@ -196,16 +238,16 @@ public class Tower : MonoBehaviour
                 this.glueBlockMatrix[y+1, x+1]
             };
 
-        towerBlockList.Remove(towerBlockList.Single(b => b!= null && b.gridX == newX && b.gridY == newY));
+        blockList.Remove(blockList.Single(b => b!= null && b.gridX == newX && b.gridY == newY));
 
-        return towerBlockList;
+        return blockList;
     }
 
-    private void ProcessGroupEntity(List<TowerBlock> oldBlocks, TowerBlock newBlock)
+    private void ProcessGroupEntity(List<Block> oldBlocks, Block newBlock)
     {
         oldBlocks.Add(newBlock);
 
-        var newGroup = new TowerBlock.GroupEntity
+        var newGroup = new Block.GroupEntity
         {
             memberBlocks = oldBlocks
         };
@@ -216,13 +258,13 @@ public class Tower : MonoBehaviour
         }
     }
 
-    public void AddGlues(TowerBlock newBlock)
+    public void AddGlues(Block newBlock)
     {
         var x = newBlock.gridX;
         var y = newBlock.gridY;
         
         //c1
-        var auxBlockList = CreateTowerBlockList(x + 1, y - 1, x, y);
+        var auxBlockList = CreateBlockList(x + 1, y - 1, x, y);
         /*
         if (CheckBlocks(auxBlockList, newBlock))
         {
@@ -241,7 +283,7 @@ public class Tower : MonoBehaviour
         }
 
         //c2
-        auxBlockList = CreateTowerBlockList(x + 1, y, x, y);
+        auxBlockList = CreateBlockList(x + 1, y, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
@@ -249,7 +291,7 @@ public class Tower : MonoBehaviour
         }
 
         //c3
-        auxBlockList = CreateTowerBlockList(x + 1, y + 1, x, y);
+        auxBlockList = CreateBlockList(x + 1, y + 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
@@ -257,7 +299,7 @@ public class Tower : MonoBehaviour
         }
 
         //c4
-        auxBlockList = CreateTowerBlockList(x, y + 1, x, y);
+        auxBlockList = CreateBlockList(x, y + 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
@@ -265,7 +307,7 @@ public class Tower : MonoBehaviour
         }
 
         //c5
-        auxBlockList = CreateTowerBlockList(x - 1, y + 1, x, y);
+        auxBlockList = CreateBlockList(x - 1, y + 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
@@ -273,7 +315,7 @@ public class Tower : MonoBehaviour
         }
 
         //c6
-        auxBlockList = CreateTowerBlockList(x - 1, y, x, y);
+        auxBlockList = CreateBlockList(x - 1, y, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
@@ -281,7 +323,7 @@ public class Tower : MonoBehaviour
         }
 
         //c7
-        auxBlockList = CreateTowerBlockList(x - 1, y - 1, x, y);
+        auxBlockList = CreateBlockList(x - 1, y - 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
@@ -289,7 +331,7 @@ public class Tower : MonoBehaviour
         }
 
         //c8
-        auxBlockList = CreateTowerBlockList(x, y - 1, x, y);
+        auxBlockList = CreateBlockList(x, y - 1, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
@@ -297,7 +339,7 @@ public class Tower : MonoBehaviour
         }
 
         //c9 - config not obtainable yet
-        auxBlockList = CreateTowerBlockList(x, y, x, y);
+        auxBlockList = CreateBlockList(x, y, x, y);
         if (CheckBlocks(auxBlockList, newBlock))
         {
             ProcessGroupEntity(auxBlockList, newBlock);
@@ -305,7 +347,7 @@ public class Tower : MonoBehaviour
         }
         */
         //c10
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y-2, x],
                 this.glueBlockMatrix[y-1, x]
             };
@@ -320,7 +362,7 @@ public class Tower : MonoBehaviour
         }
 
         //c11
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y, x+1],
                 this.glueBlockMatrix[y, x+2]
             };
@@ -335,7 +377,7 @@ public class Tower : MonoBehaviour
         }
 
         //c12
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y+1, x],
                 this.glueBlockMatrix[y+2, x]
             };
@@ -350,7 +392,7 @@ public class Tower : MonoBehaviour
         }
 
         //c13
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y, x-2],
                 this.glueBlockMatrix[y, x-1]
             };
@@ -365,7 +407,7 @@ public class Tower : MonoBehaviour
         }
 
         //c14
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y-1, x],
                 this.glueBlockMatrix[y+1, x]
             };
@@ -383,7 +425,7 @@ public class Tower : MonoBehaviour
         }
 
         //c15
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y, x-1],
                 this.glueBlockMatrix[y, x+1]
             };
@@ -401,7 +443,7 @@ public class Tower : MonoBehaviour
         }
 
         //c16
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y-1, x],
                 this.glueBlockMatrix[y-1, x+1],
                 this.glueBlockMatrix[y, x+1]
@@ -420,7 +462,7 @@ public class Tower : MonoBehaviour
         }
 
         //c17
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y, x+1],
                 this.glueBlockMatrix[y+1, x],
                 this.glueBlockMatrix[y+1, x+1]
@@ -439,7 +481,7 @@ public class Tower : MonoBehaviour
         }
 
         //c18
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y, x-1],
                 this.glueBlockMatrix[y+1, x-1],
                 this.glueBlockMatrix[y+1, x]
@@ -458,7 +500,7 @@ public class Tower : MonoBehaviour
         }
 
         //c19
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y-1, x-1],
                 this.glueBlockMatrix[y-1, x],
                 this.glueBlockMatrix[y, x-1]
@@ -477,7 +519,7 @@ public class Tower : MonoBehaviour
         }
 
         //c20
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y-1, x]
             };
         if (CheckBlocks(auxBlockList, newBlock))
@@ -491,7 +533,7 @@ public class Tower : MonoBehaviour
         }
 
         //c21
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y, x+1]
             };
         if (CheckBlocks(auxBlockList, newBlock))
@@ -505,7 +547,7 @@ public class Tower : MonoBehaviour
         }
 
         //c22
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y+1, x]
             };
         if (CheckBlocks(auxBlockList, newBlock))
@@ -519,7 +561,7 @@ public class Tower : MonoBehaviour
         }
 
         //c23
-        auxBlockList = new List<TowerBlock> {
+        auxBlockList = new List<Block> {
                 this.glueBlockMatrix[y, x-1]
             };
         if (CheckBlocks(auxBlockList, newBlock))
