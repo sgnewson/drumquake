@@ -19,6 +19,9 @@ public class Block : MonoBehaviour
 
     private void Start()
     {
+        gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeRotation;
+        gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionZ;
+
         locked = false;
         isColliding = false;
         ResetCanMove();
