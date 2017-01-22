@@ -44,17 +44,17 @@ public class Tower : MonoBehaviour
         var x = block.gridX;
         var y = block.gridY;
 
-        if (gridCells[x, y].isFilled)
-        {
-            return false;
-        }
-
         if(x < 0 || x >= gridWidth)
         {
             return false;
         }
 
         if (y < 0 || y >= gridHeight)
+        {
+            return false;
+        }
+
+        if (gridCells[x, y].isFilled)
         {
             return false;
         }
@@ -107,7 +107,8 @@ public class Tower : MonoBehaviour
                     blockSpawner.hasBlock = false;
                     lastBlock = blockSpawner.SpawnBlock();
                     blocks.Add(lastBlock);
-                    DestroyImmediate(tempBlock);
+                    blocks.Remove(tempBlock);
+                    DestroyImmediate(tempBlock.gameObject);
                 }
             }
         }
